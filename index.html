@@ -1,198 +1,512 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Amuthu AI - Register</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&display=swap" rel="stylesheet">
-<style>
-body {
-  margin:0;
-  padding:0;
-  font-family:'Inter',sans-serif;
-  font-weight:300;
-  background:#e0f7fa;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-  overflow:hidden;
-  user-select:none;
-  flex-direction:column;
-}
-.card {
-  background:#fff;
-  border-radius:24px;
-  padding:40px 20px;
-  width:320px;
-  text-align:center;
-  box-shadow:0 6px 20px rgba(0,0,0,0.15);
-  position:relative;
-}
-.logo-container { margin-bottom:20px; }
-.logo {
-  width:100px;
-  height:100px;
-  border-radius:50%;
-  object-fit:cover;
-  border:3px solid #0288d1;
-  cursor:pointer;
-  transition:.3s;
-}
-.logo:hover { transform:scale(1.05); box-shadow:0 0 12px #0288d1; }
-#preview {
-  width:100px;
-  height:100px;
-  border-radius:50%;
-  object-fit:cover;
-  margin:15px auto 0;
-  display:none;
-  border:2px solid #0288d1;
-}
-h2 { margin-bottom:15px; color:#0288d1; font-weight:400; }
-form { display:flex; flex-direction:column; gap:12px; }
-input[type="text"], input[type="email"], input[type="password"] {
-  padding:12px;
-  border-radius:12px;
-  border:1px solid #b3e5fc;
-  background:#e1f5fe;
-  color:#01579b;
-  font-weight:400;
-}
-#fileBtn {
-  padding:10px 15px;
-  border:none;
-  border-radius:12px;
-  background:#0288d1;
-  color:white;
-  cursor:pointer;
-  font-weight:400;
-  margin:0 auto;
-  display:block;
-  transition:.3s;
-}
-#fileBtn:hover { background:#0277bd; }
-button[type="submit"] {
-  padding:12px;
-  border:none;
-  border-radius:12px;
-  background:#0288d1;
-  color:white;
-  font-weight:400;
-  cursor:pointer;
-  transition:.3s;
-}
-button[type="submit"]:hover { background:#0277bd; }
-.popup {
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  background:#0288d1;
-  color:white;
-  padding:20px 25px;
-  border-radius:16px;
-  display:none;
-  z-index:9999;
-  text-align:center;
-}
-.overlay {
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.3);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:9998;
-}
-.spinner {
-  width:50px;
-  height:50px;
-  border:5px solid #b3e5fc;
-  border-top-color:#0288d1;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-}
-@keyframes spin { to { transform:rotate(360deg); } }
-footer {
-  margin-top:15px;
-  color:#01579b;
-  font-weight:300;
-  font-size:0.85rem;
-  text-align:center;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Amuthu AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1976d2;
+            --primary-light: #e3f2fd;
+            --primary-dark: #0d47a1;
+            --secondary: #03a9f4;
+            --background: #ffffff;
+            --surface: #f5f5f5;
+            --error: #f44336;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --shadow-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-2: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+            --shadow-3: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+            --border-radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card {
+            background-color: var(--background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-3);
+            padding: 32px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+        }
+
+        .subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .form-group {
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .form-field {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 12px 8px 12px;
+            border: none;
+            border-bottom: 1px solid var(--text-secondary);
+            background-color: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            border-bottom-color: var(--primary);
+        }
+
+        .form-label {
+            position: absolute;
+            left: 12px;
+            top: 16px;
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            pointer-events: none;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus ~ .form-label,
+        .form-input:not(:placeholder-shown) ~ .form-label {
+            top: 4px;
+            font-size: 12px;
+            color: var(--primary);
+        }
+
+        .profile-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        .profile-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: var(--surface);
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .profile-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-preview .material-icons {
+            font-size: 48px;
+            color: var(--text-secondary);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 10px 24px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            box-shadow: var(--shadow-1);
+        }
+
+        .file-button:hover {
+            background-color: var(--primary-dark);
+            box-shadow: var(--shadow-2);
+        }
+
+        .register-button {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 14px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            margin-top: 8px;
+            box-shadow: var(--shadow-1);
+        }
+
+        .register-button:hover {
+            background-color: var(--primary-dark);
+            box-shadow: var(--shadow-2);
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 16px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+        }
+
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .loader.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--primary-light);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .popup.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .popup-content {
+            background-color: var(--background);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: var(--shadow-3);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .popup.active .popup-content {
+            transform: translateY(0);
+        }
+
+        .popup-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .popup-message {
+            font-size: 16px;
+            font-weight: 400;
+            margin-bottom: 24px;
+            color: var(--text-secondary);
+        }
+
+        .popup-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 10px 24px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            float: right;
+        }
+
+        .popup-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .error-popup .popup-title {
+            color: var(--error);
+        }
+
+        .error-popup .popup-button {
+            background-color: var(--error);
+        }
+
+        .error-popup .popup-button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="card">
+            <img src="https://picsum.photos/seed/amuthuai/120/120.jpg" alt="Amuthu AI" class="logo">
+            <h1 class="title">Create Account</h1>
+            <p class="subtitle">Join Amuthu AI to start your journey</p>
+            
+            <div class="profile-section">
+                <div class="profile-preview" id="profilePreview">
+                    <i class="material-icons">person</i>
+                </div>
+                <input type="file" id="profileImage" class="file-input" accept="image/*">
+                <button class="file-button" onclick="document.getElementById('profileImage').click()">Choose a profile picture</button>
+            </div>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <div class="form-field">
+                        <input type="text" id="fullName" class="form-input" placeholder=" " required>
+                        <label for="fullName" class="form-label">Full Name</label>
+                    </div>
+                    <div class="form-field">
+                        <input type="email" id="email" class="form-input" placeholder=" " required>
+                        <label for="email" class="form-label">Email</label>
+                    </div>
+                    <div class="form-field">
+                        <input type="password" id="password" class="form-input" placeholder=" " required>
+                        <label for="password" class="form-label">Password</label>
+                    </div>
+                    <div class="form-field">
+                        <input type="tel" id="phone" class="form-input" placeholder=" ">
+                        <label for="phone" class="form-label">Phone (Optional)</label>
+                    </div>
+                </div>
+                <button type="submit" class="register-button">Register</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="footer">Made by ninsara.dev | Amuthu AI</div>
+    
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+    </div>
+    
+    <div class="popup" id="successPopup">
+        <div class="popup-content">
+            <h2 class="popup-title">Registration Successful!</h2>
+            <p class="popup-message">Your account has been created successfully. Redirecting to bot...</p>
+            <button class="popup-button" onclick="closePopup('successPopup')">OK</button>
+        </div>
+    </div>
+    
+    <div class="popup error-popup" id="errorPopup">
+        <div class="popup-content">
+            <h2 class="popup-title">Registration Failed</h2>
+            <p class="popup-message" id="errorMessage">Please check your information and try again.</p>
+            <button class="popup-button" onclick="closePopup('errorPopup')">OK</button>
+        </div>
+    </div>
 
-<div class="overlay" id="loaderOverlay">
-  <div class="spinner"></div>
-</div>
-
-<div class="popup" id="popupMsg"></div>
-
-<div class="card" id="registerCard">
-  <div class="logo-container">
-    <img src="https://raw.githubusercontent.com/ETDkF80mtM6dm7QToAegx7evVnsDL4Up/SWdHYCXxShrpE3yWHQEuDmvdO22xshznIzeWUCcqLeZsWrDUgZUAwLXfETE3mPjPSWdHYC/refs/heads/main/unnamed.png" class="logo" alt="Amuthu AI">
-    <img id="preview">
-  </div>
-  <h2>Register</h2>
-  <form id="regForm">
-    <input type="file" accept="image/*" id="profilePic" style="display:none;" required>
-    <button type="button" id="fileBtn">Choose Profile Picture</button>
-    <input type="text" placeholder="Username" id="username" required>
-    <input type="email" placeholder="Email" id="email" required>
-    <input type="password" placeholder="Password" id="password" required>
-    <input type="password" placeholder="Confirm Password" id="confirmPassword" required>
-    <button type="submit">Register</button>
-  </form>
-</div>
-
-<footer>Made by ninsara.dev | Amuthu AI</footer>
-
-<script>
-document.addEventListener('contextmenu',e=>e.preventDefault());
-document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key.toUpperCase()))||(e.ctrlKey&&e.key==='u'))e.preventDefault();});
-
-const regForm=document.getElementById('regForm');
-const loader=document.getElementById('loaderOverlay');
-const popup=document.getElementById('popupMsg');
-const fileBtn=document.getElementById('fileBtn');
-const fileInput=document.getElementById('profilePic');
-const preview=document.getElementById('preview');
-
-window.addEventListener('load',()=>{if(localStorage.getItem('amuthuUser'))window.location.href='bot.html';});
-
-fileBtn.addEventListener('click',()=>fileInput.click());
-fileInput.addEventListener('change',async e=>{
-  const file=e.target.files[0];
-  if(file){
-    const reader=new FileReader();
-    reader.onload=()=>{preview.src=reader.result;preview.style.display='block';}
-    reader.readAsDataURL(file);
-  }
-});
-
-function imgToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});}
-function showLoader(s=true){loader.style.display=s?'flex':'none';}
-function showPopup(msg,d=2000){popup.innerText=msg;popup.style.display='block';setTimeout(()=>popup.style.display='none',d);}
-
-regForm.addEventListener('submit',async e=>{
-  e.preventDefault();
-  const file=fileInput.files[0];
-  const username=document.getElementById('username').value.trim();
-  const email=document.getElementById('email').value.trim();
-  const password=document.getElementById('password').value;
-  const confirmPassword=document.getElementById('confirmPassword').value;
-  if(password!==confirmPassword){showPopup('Passwords do not match!');return;}
-  showLoader(true);
-  try{
-    const avatar_b64=await imgToBase64(file);
-    const userData={username,email,password,avatar_b64,created_at:new Date().toISOString()};
-    localStorage.setItem('amuthuUser',JSON.stringify(userData));
-    setTimeout(()=>{showLoader(false);showPopup('Registered successfully!',1000);setTimeout(()=>window.location.href='bot.html',1000);},800);
-  }catch(err){showLoader(false);showPopup('Failed to process image');}
-});
-</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = localStorage.getItem('userData');
+            if (userData) {
+                window.location.href = 'bot.html';
+            }
+            
+            document.getElementById('profileImage').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const profilePreview = document.getElementById('profilePreview');
+                        profilePreview.innerHTML = `<img src="${event.target.result}" alt="Profile">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const fullName = document.getElementById('fullName').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const phone = document.getElementById('phone').value;
+                const profileImage = document.getElementById('profileImage').files[0];
+                
+                if (!fullName || !email || !password) {
+                    showPopup('errorPopup', 'Please fill in all required fields.');
+                    return;
+                }
+                
+                if (password.length < 8) {
+                    showPopup('errorPopup', 'Password must be at least 8 characters long.');
+                    return;
+                }
+                
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showPopup('errorPopup', 'Please enter a valid email address.');
+                    return;
+                }
+                
+                const loader = document.getElementById('loader');
+                loader.classList.add('active');
+                
+                setTimeout(function() {
+                    let profileImageSrc = '';
+                    if (profileImage) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            profileImageSrc = event.target.result;
+                            saveUserData();
+                        };
+                        reader.readAsDataURL(profileImage);
+                    } else {
+                        saveUserData();
+                    }
+                    
+                    function saveUserData() {
+                        const userData = {
+                            fullName: fullName,
+                            email: email,
+                            password: password,
+                            phone: phone,
+                            profileImage: profileImageSrc || '',
+                            registeredAt: new Date().toISOString()
+                        };
+                        
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        
+                        loader.classList.remove('active');
+                        showPopup('successPopup');
+                        
+                        setTimeout(function() {
+                            window.location.href = 'bot.html';
+                        }, 2000);
+                    }
+                }, 1500);
+            });
+        });
+        
+        function showPopup(popupId, message) {
+            const popup = document.getElementById(popupId);
+            if (message && popupId === 'errorPopup') {
+                document.getElementById('errorMessage').textContent = message;
+            }
+            popup.classList.add('active');
+        }
+        
+        function closePopup(popupId) {
+            document.getElementById(popupId).classList.remove('active');
+        }
+        
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+                (e.ctrlKey && e.shiftKey && e.key === 'C') || 
+                (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
 </body>
 </html>
