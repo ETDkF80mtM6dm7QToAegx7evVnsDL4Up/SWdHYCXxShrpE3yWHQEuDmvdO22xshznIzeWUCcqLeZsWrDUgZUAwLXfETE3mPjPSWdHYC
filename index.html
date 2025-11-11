@@ -4,11 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Amuthu AI - Register</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&display=swap" rel="stylesheet">
 <style>
 body {
   margin:0;
   padding:0;
-  font-family: 'Poppins', sans-serif;
+  font-family:'Inter',sans-serif;
+  font-weight:300;
   background:#e0f7fa;
   display:flex;
   justify-content:center;
@@ -16,6 +18,7 @@ body {
   height:100vh;
   overflow:hidden;
   user-select:none;
+  flex-direction:column;
 }
 .card {
   background:#fff;
@@ -26,10 +29,7 @@ body {
   box-shadow:0 6px 20px rgba(0,0,0,0.15);
   position:relative;
 }
-.logo-container {
-  position:relative;
-  margin-bottom:20px;
-}
+.logo-container { margin-bottom:20px; }
 .logo {
   width:100px;
   height:100px;
@@ -45,38 +45,44 @@ body {
   height:100px;
   border-radius:50%;
   object-fit:cover;
-  margin-top:10px;
+  margin:15px auto 0;
   display:none;
   border:2px solid #0288d1;
 }
-h2 {
-  margin-bottom:15px;
-  color:#0288d1;
-}
-form {
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-input {
+h2 { margin-bottom:15px; color:#0288d1; font-weight:400; }
+form { display:flex; flex-direction:column; gap:12px; }
+input[type="text"], input[type="email"], input[type="password"] {
   padding:12px;
   border-radius:12px;
   border:1px solid #b3e5fc;
   background:#e1f5fe;
   color:#01579b;
-  font-weight:500;
+  font-weight:400;
 }
-button {
+#fileBtn {
+  padding:10px 15px;
+  border:none;
+  border-radius:12px;
+  background:#0288d1;
+  color:white;
+  cursor:pointer;
+  font-weight:400;
+  margin:0 auto;
+  display:block;
+  transition:.3s;
+}
+#fileBtn:hover { background:#0277bd; }
+button[type="submit"] {
   padding:12px;
   border:none;
   border-radius:12px;
   background:#0288d1;
   color:white;
-  font-weight:600;
+  font-weight:400;
   cursor:pointer;
   transition:.3s;
 }
-button:hover { background:#0277bd; }
+button[type="submit"]:hover { background:#0277bd; }
 .popup {
   position:fixed;
   top:50%;
@@ -108,6 +114,13 @@ button:hover { background:#0277bd; }
   animation:spin 1s linear infinite;
 }
 @keyframes spin { to { transform:rotate(360deg); } }
+footer {
+  margin-top:15px;
+  color:#01579b;
+  font-weight:300;
+  font-size:0.85rem;
+  text-align:center;
+}
 </style>
 </head>
 <body>
@@ -125,7 +138,8 @@ button:hover { background:#0277bd; }
   </div>
   <h2>Register</h2>
   <form id="regForm">
-    <input type="file" accept="image/*" id="profilePic" required>
+    <input type="file" accept="image/*" id="profilePic" style="display:none;" required>
+    <button type="button" id="fileBtn">Choose Profile Picture</button>
     <input type="text" placeholder="Username" id="username" required>
     <input type="email" placeholder="Email" id="email" required>
     <input type="password" placeholder="Password" id="password" required>
@@ -134,17 +148,23 @@ button:hover { background:#0277bd; }
   </form>
 </div>
 
+<footer>Made by ninsara.dev | Amuthu AI</footer>
+
 <script>
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key.toUpperCase()))||(e.ctrlKey&&e.key==='u'))e.preventDefault();});
+
 const regForm=document.getElementById('regForm');
 const loader=document.getElementById('loaderOverlay');
 const popup=document.getElementById('popupMsg');
+const fileBtn=document.getElementById('fileBtn');
+const fileInput=document.getElementById('profilePic');
 const preview=document.getElementById('preview');
 
-window.addEventListener('load',()=>{const u=localStorage.getItem('amuthuUser');if(u)window.location.href='bot.html';});
+window.addEventListener('load',()=>{if(localStorage.getItem('amuthuUser'))window.location.href='bot.html';});
 
-document.getElementById('profilePic').addEventListener('change',async e=>{
+fileBtn.addEventListener('click',()=>fileInput.click());
+fileInput.addEventListener('change',async e=>{
   const file=e.target.files[0];
   if(file){
     const reader=new FileReader();
@@ -156,9 +176,10 @@ document.getElementById('profilePic').addEventListener('change',async e=>{
 function imgToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});}
 function showLoader(s=true){loader.style.display=s?'flex':'none';}
 function showPopup(msg,d=2000){popup.innerText=msg;popup.style.display='block';setTimeout(()=>popup.style.display='none',d);}
+
 regForm.addEventListener('submit',async e=>{
   e.preventDefault();
-  const file=document.getElementById('profilePic').files[0];
+  const file=fileInput.files[0];
   const username=document.getElementById('username').value.trim();
   const email=document.getElementById('email').value.trim();
   const password=document.getElementById('password').value;
