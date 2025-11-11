@@ -796,7 +796,7 @@
                 </div>
                 <span class="material-icons model-check">check_circle</span>
             </div>
-            <div class="model-option active" data-model="multi">
+            <div class="model-option" data-model="multi">
                 <div class="model-info">
                     <div class="model-name">Amuthu Multi</div>
                     <div class="model-description">Versatile model for everyday tasks and multilingual conversations</div>
@@ -873,6 +873,14 @@
             document.querySelector(`.theme-option[data-theme="${theme}"]`).classList.add('active');
 
             const selectedModel = localStorage.getItem('selectedModel') || 'multi';
+            
+            // Reset all model options first
+            document.querySelectorAll('.model-option').forEach(opt => {
+                opt.classList.remove('active');
+                opt.querySelector('.model-check').style.opacity = '0';
+            });
+            
+            // Then set the selected model
             document.querySelector(`.model-option[data-model="${selectedModel}"]`).classList.add('active');
             document.querySelector(`.model-option[data-model="${selectedModel}"] .model-check`).style.opacity = '1';
 
@@ -1115,7 +1123,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': 'Bearer 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'
+                            'Authorization': 'Bearer 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'
                         },
                         body: JSON.stringify({
                             model: 'meta-llama/llama-3-8b-instruct:free',
