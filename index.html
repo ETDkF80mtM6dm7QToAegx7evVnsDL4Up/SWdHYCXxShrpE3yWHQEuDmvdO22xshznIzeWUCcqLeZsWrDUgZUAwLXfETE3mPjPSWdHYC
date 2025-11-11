@@ -1,504 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Amuthu AI — Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amuthu AI - Register</title>
 <style>
-  :root{
-    --bg1:#eef6ff;
-    --accent:#0b6cff;
-    --card:#ffffff;
-    --muted:#6b7a8a;
-    --success:#16a34a;
-    --danger:#ef4444;
-  }
-  *{box-sizing:border-box}
-  body{
+  /* Body & card */
+  body {
     margin:0;
-    min-height:100vh;
-    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    padding:0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg,#171717,#1a1a1a);
     display:flex;
-    align-items:center;
     justify-content:center;
-    background:linear-gradient(180deg,var(--bg1) 0%, #ffffff 100%);
-    padding:20px;
+    align-items:center;
+    height:100vh;
+    overflow:hidden; /* unscrollable */
+    user-select:none; /* prevent selection */
   }
 
-  .wrap{
-    width:100%;
-    max-width:940px;
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:28px;
-    align-items:center;
-  }
-
-  /* left - branding */
-  .brand {
-    padding:28px;
-    border-radius:14px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,255,0.85));
-    box-shadow:0 8px 30px rgba(20,40,80,0.08);
-    display:flex;
-    flex-direction:column;
-    gap:18px;
-    align-items:center;
+  .card {
+    background:#222;
+    border-radius:20px;
+    padding:30px 20px 40px 20px;
+    width:90%;
+    max-width:400px;
     text-align:center;
+    position:relative;
   }
 
-  .avatar {
+  /* Logo */
+  .logo {
     width:120px;
     height:120px;
     border-radius:50%;
-    overflow:hidden;
-    display:inline-block;
-    border:6px solid rgba(255,255,255,0.6);
-    box-shadow:0 8px 24px rgba(11,108,255,0.14);
-    transition: transform .25s ease, box-shadow .25s ease;
-    background:#fff;
+    object-fit:cover;
+    border:3px solid #444;
+    transition:.3s;
+    margin-top:-80px;
+    margin-bottom:20px;
+  }
+  .logo:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 10px #0cf;
   }
 
-  .avatar img{width:100%;height:100%;object-fit:cover;display:block;}
-  .avatar:hover{ transform:translateY(-6px) scale(1.04); box-shadow:0 18px 46px rgba(11,108,255,0.22);}
-
-  h1{margin:0;font-size:22px;color:#0f1724}
-  p.lead{margin:0;color:var(--muted);max-width:360px}
-
-  /* right - card area with forms */
-  .card {
-    padding:20px;
-    border-radius:14px;
-    background:var(--card);
-    box-shadow:0 10px 30px rgba(20,40,80,0.06);
+  h2 {
+    color:#0cf;
+    margin-bottom:15px;
   }
 
-  .tabs { display:flex; gap:8px; margin-bottom:16px; }
-  .tab {
-    flex:1; padding:10px 12px; text-align:center; border-radius:10px; cursor:pointer; user-select:none;
-    background:transparent; border:1px solid transparent; color:var(--muted);
+  /* Form */
+  form { display:flex; flex-direction:column; gap:12px; }
+  input {
+    padding:12px;
+    border-radius:8px;
+    border:none;
+    background:#333;
+    color:white;
   }
-  .tab.active { background:linear-gradient(90deg,var(--accent),#2a9fff); color:#fff; font-weight:600; box-shadow:0 8px 24px rgba(11,108,255,0.12);}
-
-  form .row{display:flex; gap:10px}
-  input[type=text], input[type=password], input[type=email]{
-    width:100%; padding:12px 10px; border-radius:10px; border:1px solid #e6eefb; font-size:14px;
-    background: #fbfeff;
+  button {
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#0cf;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    margin-top:10px;
   }
-  label.small{font-size:13px;color:var(--muted); margin-bottom:6px; display:block;}
+  button:hover { background:#09f; }
 
-  .actions{display:flex; gap:10px; margin-top:12px}
-  .btn{padding:12px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:600}
-  .btn.primary{background:var(--accent); color:#fff; flex:1}
-  .btn.alt{background:#eef6ff; color:var(--accent); border:1px solid rgba(11,108,255,0.08);}
-
-  .muted{color:var(--muted); font-size:13px; margin-top:10px}
-  .error{color:var(--danger); margin-top:8px}
-  .success{color:var(--success); margin-top:8px}
-
-  .smallbtn{background:none;border:none;color:var(--accent);cursor:pointer;padding:4px;font-size:13px}
-
-  /* popup loader */
-  .overlay{
-    position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:9999;
-    backdrop-filter: blur(4px) brightness(0.9);
-  }
-  .loaderCard{
-    background:rgba(255,255,255,0.98); padding:22px; border-radius:12px; box-shadow:0 6px 24px rgba(10,20,60,0.12); text-align:center;
-  }
-  .spinner{
-    width:54px;height:54px;border-radius:50%; border:6px solid #edf5ff; border-top-color:var(--accent); animation:spin 1s linear infinite; margin:0 auto 10px;
-  }
-  @keyframes spin{to{transform:rotate(360deg)}}
-
-  /* forgot popup */
-  .modal{
-    position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); z-index:10001;
-    width:92%; max-width:420px; display:none;
+  /* Popup */
+  .popup {
+    position:fixed;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    background:rgba(0,0,0,0.95);
+    color:white;
+    padding:20px 25px;
+    border-radius:12px;
+    display:none;
+    z-index:9999;
+    text-align:center;
   }
 
-  /* responsive */
-  @media (max-width:880px){
-    .wrap{ grid-template-columns: 1fr; padding:0; }
-    .brand{ order:2; }
+  /* Loader overlay */
+  .overlay {
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.6);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:9998;
   }
-
-  /* small helper */
-  .profilePreview{ width:64px; height:64px; border-radius:50%; overflow:hidden; border:2px solid #fff; box-shadow:0 6px 20px rgba(0,0,0,0.06) }
-  .tiny{font-size:12px;color:var(--muted)}
+  .spinner {
+    width:50px; height:50px;
+    border:5px solid #444;
+    border-top-color:#0cf;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<!-- =============== PAGE LAYOUT =============== -->
-<div class="wrap">
-  <div class="brand">
-    <div class="avatar" id="brandAvatar">
-      <!-- icon will be loaded by JS from config -->
-      <img id="brandIcon" src="" alt="Amuthu AI">
-    </div>
-    <h1>Amuthu AI</h1>
-    <p class="lead">Your friendly assistant. Fast chat, demo login system, and lightweight profile support.</p>
-    <div class="muted tiny">Mobile-ready • Demo-only storage: GitHub JSON</div>
-  </div>
-
-  <div class="card">
-    <div class="tabs">
-      <div class="tab active" id="tabLogin">Login</div>
-      <div class="tab" id="tabRegister">Register</div>
-    </div>
-
-    <!-- LOGIN -->
-    <div id="loginPane">
-      <form id="loginForm" onsubmit="event.preventDefault(); handleLogin();">
-        <label class="small">Username</label>
-        <input id="login_username" type="text" placeholder="username" required>
-
-        <label class="small">Password</label>
-        <input id="login_password" type="password" placeholder="password" required>
-
-        <div style="display:flex; gap:8px; align-items:center; margin-top:10px">
-          <button type="submit" class="btn primary">Login</button>
-          <button type="button" class="btn alt" onclick="openForgot()">Forgot?</button>
-        </div>
-      </form>
-      <div id="loginMsg" class="error" style="display:none"></div>
-    </div>
-
-    <!-- REGISTER -->
-    <div id="registerPane" style="display:none">
-      <form id="regForm" onsubmit="event.preventDefault(); handleSignup();">
-        <label class="small">Profile picture (optional)</label>
-        <div style="display:flex; gap:10px; align-items:center">
-          <div class="profilePreview" id="previewWrap"><img id="previewImg" src="" style="width:100%;height:100%;object-fit:cover;display:block" alt=""></div>
-          <div style="flex:1">
-            <input id="reg_avatar" type="file" accept="image/*">
-            <div class="tiny muted">Image will be highly compressed and stored as base64.</div>
-          </div>
-        </div>
-
-        <label class="small" style="margin-top:10px">Email</label>
-        <input id="reg_email" type="email" placeholder="you@example.com" required>
-
-        <label class="small">Username</label>
-        <input id="reg_username" type="text" placeholder="username" required>
-
-        <label class="small">Password</label>
-        <input id="reg_password" type="password" placeholder="password" required>
-
-        <label class="small">Confirm password</label>
-        <input id="reg_password2" type="password" placeholder="confirm password" required>
-
-        <div class="actions">
-          <button type="submit" class="btn primary">Sign up</button>
-          <button type="button" class="btn alt" onclick="resetRegister()">Reset</button>
-        </div>
-      </form>
-
-      <div id="regMsg" class="error" style="display:none"></div>
-    </div>
-
-  </div>
+<div class="overlay" id="loaderOverlay">
+  <div class="spinner"></div>
 </div>
 
-<!-- Loader overlay (blur background while writing to GitHub) -->
-<div id="overlay" class="overlay">
-  <div class="loaderCard">
-    <div class="spinner"></div>
-    <div id="overlayText">Processing...</div>
-  </div>
-</div>
+<div class="popup" id="popupMsg"></div>
 
-<!-- Forgot modal -->
-<div id="forgotModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="forgotTitle">
-  <div style="background:#fff;padding:18px;border-radius:10px;box-shadow:0 10px 40px rgba(10,20,60,0.12);">
-    <h3 id="forgotTitle" style="margin:0 0 6px 0">Forgot Password</h3>
-    <div class="tiny muted" style="margin-bottom:12px">Enter your email and we will send a recovery message (demo only).</div>
-    <input id="forgotEmail" type="email" placeholder="you@example.com" style="width:100%;padding:10px;border-radius:8px;border:1px solid #eef5ff">
-    <div style="display:flex; gap:8px; margin-top:12px">
-      <button class="btn primary" onclick="sendFakeRecovery()">Send</button>
-      <button class="btn alt" onclick="closeForgot()">Cancel</button>
-    </div>
-    <div id="forgotMsg" class="success" style="display:none;margin-top:10px"></div>
-  </div>
+<div class="card" id="registerCard">
+  <img src="https://raw.githubusercontent.com/ETDkF80mtM6dm7QToAegx7evVnsDL4Up/SWdHYCXxShrpE3yWHQEuDmvdO22xshznIzeWUCcqLeZsWrDUgZUAwLXfETE3mPjPSWdHYC/refs/heads/main/unnamed.png" class="logo" alt="Amuthu AI">
+  <h2>Register to Amuthu AI</h2>
+  <form id="regForm">
+    <input type="file" accept="image/*" id="profilePic" required>
+    <input type="text" placeholder="Username" id="username" required>
+    <input type="email" placeholder="Email" id="email" required>
+    <input type="password" placeholder="Password" id="password" required>
+    <input type="password" placeholder="Confirm Password" id="confirmPassword" required>
+    <button type="submit">Register</button>
+  </form>
 </div>
 
 <script>
-/*
-  CONFIG: Edit these variables to match your repo.
-  IMPORTANT: Put your personal token ONLY in your local copy. Do NOT paste it into public chat.
-*/
-const GITHUB_OWNER = "ETDkF80mtM6dm7QToAegx7evVnsDL4Up";
-const GITHUB_REPO  = "SWdHYCXxShrpE3yWHQEuDmvdO22xshznIzeWUCcqLeZsWrDUgZUAwLXfETE3mPjPSWdHYC";
-const FILE_PATH     = "userdata.json";
-const GITHUB_BRANCH = "main";
-// Paste your token here in your local copy ONLY (leave blank if you only want to read). Example: "ghp_xxx"
-const GITHUB_TOKEN  = "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"; // <-- PASTE YOUR NEW TOKEN HERE (local only!)
-
-/* Brand icon (will be loaded and cropped via CSS). You gave a raw URL earlier. */
-const BRAND_ICON_URL = "https://raw.githubusercontent.com/ETDkF80mtM6dm7QToAegx7evVnsDL4Up/SWdHYCXxShrpE3yWHQEuDmvdO22xshznIzeWUCcqLeZsWrDUgZUAwLXfETE3mPjPSWdHYC/refs/heads/main/unnamed.png";
-
-/* ---------- UI wiring ---------- */
-const tabLogin = document.getElementById('tabLogin');
-const tabRegister = document.getElementById('tabRegister');
-const loginPane = document.getElementById('loginPane');
-const registerPane = document.getElementById('registerPane');
-
-tabLogin.addEventListener('click', ()=>{ showPane('login') });
-tabRegister.addEventListener('click', ()=>{ showPane('register') });
-
-function showPane(p){
-  if(p==='login'){
-    tabLogin.classList.add('active'); tabRegister.classList.remove('active');
-    loginPane.style.display='block'; registerPane.style.display='none';
-  } else {
-    tabRegister.classList.add('active'); tabLogin.classList.remove('active');
-    loginPane.style.display='none'; registerPane.style.display='block';
-  }
-}
-
-/* load brand icon */
-const brandIcon = document.getElementById('brandIcon');
-brandIcon.src = BRAND_ICON_URL;
-
-/* preview avatar */
-const regAvatar = document.getElementById('reg_avatar');
-const previewImg = document.getElementById('previewImg');
-regAvatar.addEventListener('change', handlePreview);
-
-/* overlay helpers */
-const overlay = document.getElementById('overlay');
-function showOverlay(text='Processing...'){ overlay.style.display='flex'; document.getElementById('overlayText').innerText=text; }
-function hideOverlay(){ overlay.style.display='none'; }
-
-/* forgot modal handlers */
-const forgotModal = document.getElementById('forgotModal');
-function openForgot(){ forgotModal.style.display='block'; }
-function closeForgot(){ forgotModal.style.display='none'; document.getElementById('forgotMsg').style.display='none'; }
-
-/* helper to show messages */
-function showMsg(elId, text, ok=false){
-  const el = document.getElementById(elId);
-  el.style.display='block';
-  el.innerText = text;
-  el.className = ok ? 'success' : 'error';
-  setTimeout(()=>{ el.style.display='none'; }, 5000);
-}
-
-/* ----------------- Image compression to base64 (99% compressed) -----------------
-We will convert uploaded image to JPEG at quality=0.01 (very aggressive compression).
-Returns a base64 string without data: prefix.
-*/
-function compressImageFile(file, maxSize=256){
-  return new Promise((resolve, reject)=>{
-    if(!file){ resolve(null); return; }
-    const img = new Image();
-    const fr = new FileReader();
-    fr.onload = (e) => {
-      img.src = e.target.result;
-    };
-    fr.onerror = reject;
-    img.onload = async () => {
-      try {
-        // Limit to reasonable canvas size to keep base64 small
-        const maxDim = maxSize; // e.g., 256px square
-        let w = img.width, h = img.height;
-        if (Math.max(w,h) > maxDim) {
-          const scale = maxDim / Math.max(w,h);
-          w = Math.round(w * scale);
-          h = Math.round(h * scale);
-        }
-        const canvas = document.createElement('canvas');
-        canvas.width = w;
-        canvas.height = h;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, w, h);
-        // quality 0.01 = ~99% compression (extremely lossy) as you requested
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.01);
-        const b64 = dataUrl.split(',')[1];
-        resolve(b64);
-      } catch(err){ reject(err); }
-    };
-    fr.readAsDataURL(file);
-  });
-}
-
-async function handlePreview(e){
-  const file = e.target.files[0];
-  if(!file) { previewImg.src=''; return; }
-  // show quick preview using object URL
-  previewImg.src = URL.createObjectURL(file);
-}
-
-/* ----------------- GitHub helpers -----------------
-We use:
-- Raw URL for fast read: https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{path}
-- API endpoint for read/write: https://api.github.com/repos/{owner}/{repo}/contents/{path}
-*/
-const rawUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FILE_PATH}`;
-const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}`;
-
-/* Fetch users data via raw (no auth) - used for login */
-async function fetchUsersRaw(){
-  const res = await fetch(rawUrl);
-  if(!res.ok) throw new Error('Cannot fetch users.json (raw). status='+res.status);
-  return await res.json();
-}
-
-/* Fetch users data via API (with token), returns object with content (base64) and sha */
-async function fetchUsersApi(){
-  if(!GITHUB_TOKEN) throw new Error('No GitHub token set (GITHUB_TOKEN).');
-  const res = await fetch(apiUrl + `?ref=${GITHUB_BRANCH}`, {
-    headers: {
-      Authorization: `token ${GITHUB_TOKEN}`,
-      Accept: 'application/vnd.github.v3+json'
+  // Disable right click
+  document.addEventListener('contextmenu', e=>e.preventDefault());
+  // Disable keys: F12, Ctrl+Shift+I/J/C, Ctrl+U
+  document.addEventListener('keydown', e=>{
+    if(e.key==='F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) || (e.ctrlKey && e.key==='u')) {
+      e.preventDefault();
     }
   });
-  if(!res.ok){
-    const t = await res.text();
-    throw new Error('GitHub API GET error: ' + res.status + ' - ' + t);
-  }
-  return await res.json();
-}
 
-/* Update the file on GitHub via PUT. payload: message, content (base64), sha */
-async function updateUsersApi(newContentB64, sha){
-  if(!GITHUB_TOKEN) throw new Error('No GitHub token set (GITHUB_TOKEN).');
-  const payload = {
-    message: `Update userdata.json via Amuthu AI web signup`,
-    content: newContentB64,
-    sha: sha,
-    branch: GITHUB_BRANCH
-  };
-  const res = await fetch(apiUrl, {
-    method: 'PUT',
-    headers: {
-      Authorization: `token ${GITHUB_TOKEN}`,
-      Accept: 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
+  const regForm = document.getElementById('regForm');
+  const loader = document.getElementById('loaderOverlay');
+  const popup = document.getElementById('popupMsg');
+  const registerCard = document.getElementById('registerCard');
+
+  // On load: check if user exists
+  window.addEventListener('load', ()=>{
+    const user = localStorage.getItem('amuthuUser');
+    if(user){ window.location.href='bot.html'; }
   });
-  const text = await res.text();
-  if(!res.ok) throw new Error('GitHub API PUT error: ' + res.status + ' - ' + text);
-  return JSON.parse(text);
-}
 
-/* ----------------- Signup flow ----------------- */
-async function handleSignup(){
-  const email = document.getElementById('reg_email').value.trim();
-  const username = document.getElementById('reg_username').value.trim();
-  const password = document.getElementById('reg_password').value;
-  const password2 = document.getElementById('reg_password2').value;
-  const avatarFile = document.getElementById('reg_avatar').files[0] || null;
+  // Convert image to base64
+  function imgToBase64(file){
+    return new Promise((resolve,reject)=>{
+      const reader = new FileReader();
+      reader.onload = ()=>resolve(reader.result.split(',')[1]); // remove data:image/... prefix
+      reader.onerror=reject;
+      reader.readAsDataURL(file);
+    });
+  }
 
-  if(!email || !username || !password || !password2){ showMsg('regMsg','Please fill all fields'); return; }
-  if(password !== password2){ showMsg('regMsg','Passwords do not match'); return; }
+  function showLoader(show=true){ loader.style.display=show?'flex':'none'; }
+  function showPopup(msg, duration=2000){
+    popup.innerText = msg;
+    popup.style.display='block';
+    setTimeout(()=>popup.style.display='none', duration);
+  }
 
-  showOverlay('Preparing data...');
-  try {
-    // compress avatar to base64 (very small)
-    const avatarB64 = await compressImageFile(avatarFile, 256); // returns base64 string or null
-    // fetch current file via API (need sha)
-    showOverlay('Fetching repo info...');
-    const apiObj = await fetchUsersApi();
-    // apiObj.content is base64 content with newlines possibly
-    const contentStr = atob(apiObj.content.replace(/\n/g,'')); // decode
-    let json = {};
-    try { json = JSON.parse(contentStr); } catch(e){ json = {}; }
-    const users = Array.isArray(json.users) ? json.users : [];
+  regForm.addEventListener('submit', async e=>{
+    e.preventDefault();
+    const file = document.getElementById('profilePic').files[0];
+    const username = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
 
-    // check duplicates
-    if(users.find(u=>u.username === username)){
-      hideOverlay();
-      showMsg('regMsg','Username already exists');
+    if(password!==confirmPassword){
+      showPopup('Passwords do not match!');
       return;
     }
-    if(users.find(u=>u.email === email)){
-      hideOverlay();
-      showMsg('regMsg','Email already registered');
-      return;
+    showLoader(true);
+    try{
+      const avatar_b64 = await imgToBase64(file);
+      // Save to localStorage
+      const userData = { username,email,password,avatar_b64,created_at:new Date().toISOString() };
+      localStorage.setItem('amuthuUser', JSON.stringify(userData));
+      setTimeout(()=>{
+        showLoader(false);
+        showPopup('Registered successfully! Redirecting...', 1500);
+        setTimeout(()=> window.location.href='bot.html',1500);
+      },1000);
+    }catch(err){
+      console.error(err);
+      showLoader(false);
+      showPopup('Failed to process image');
     }
+  });
 
-    // create new user object
-    const newUser = {
-      username: username,
-      password: password,   // WARNING: stored in plaintext (demo only)
-      email: email,
-      avatar_b64: avatarB64 || null,
-      created_at: new Date().toISOString()
-    };
-    users.push(newUser);
-    const newJson = { users: users };
-    const newContentStr = JSON.stringify(newJson, null, 2);
-    const newContentB64 = btoa(newContentStr);
-
-    showOverlay('Uploading to GitHub...');
-    const putResp = await updateUsersApi(newContentB64, apiObj.sha);
-    console.log('GitHub PUT response:', putResp);
-    hideOverlay();
-    showMsg('regMsg','Signup successful — please login', true);
-
-    // reset and go to login tab
-    resetRegister();
-    showPane('login');
-  } catch(err){
-    console.error(err);
-    hideOverlay();
-    showMsg('regMsg', 'Signup failed: ' + (err.message || 'unknown'));
-  }
-}
-
-/* ----------------- Login flow ----------------- */
-async function handleLogin(){
-  const username = document.getElementById('login_username').value.trim();
-  const password = document.getElementById('login_password').value;
-  if(!username || !password){ showMsg('loginMsg','Enter username and password'); return; }
-  try {
-    const data = await fetchUsersRaw();
-    const users = Array.isArray(data.users) ? data.users : [];
-    const found = users.find(u => u.username === username && u.password === password);
-    if(found){
-      // success
-      localStorage.setItem('chatUser', JSON.stringify({ username: found.username, email: found.email, avatar_b64: found.avatar_b64||null }));
-      // go to bot page (you will create bot.html)
-      window.location.href = 'bot.html';
-    } else {
-      showMsg('loginMsg','Invalid username or password. Please check or register.');
-    }
-  } catch(err){
-    console.error(err);
-    showMsg('loginMsg','Error fetching user data: ' + (err.message||''));
-  }
-}
-
-/* ----------------- Helpers ----------------- */
-function resetRegister(){
-  document.getElementById('reg_email').value='';
-  document.getElementById('reg_username').value='';
-  document.getElementById('reg_password').value='';
-  document.getElementById('reg_password2').value='';
-  document.getElementById('reg_avatar').value='';
-  previewImg.src='';
-}
-
-/* ----------------- Forgot password (fake) ----------------- */
-function sendFakeRecovery(){
-  const email = document.getElementById('forgotEmail').value.trim();
-  if(!email){ document.getElementById('forgotMsg').innerText='Please enter an email.'; document.getElementById('forgotMsg').style.display='block'; return; }
-  // Fake: show message and auto-close after 2s
-  document.getElementById('forgotMsg').innerText = 'Password recovery email sent to ' + email + ' (demo only).';
-  document.getElementById('forgotMsg').style.display='block';
-  setTimeout(()=>{ closeForgot(); }, 1800);
-}
-
-/* on load: try to show brand avatar properly cropped (it will be circular via CSS) */
-(function init(){
-  // If token is empty, show a small hint
-  if(!GITHUB_TOKEN){
-    console.warn('No GitHub token set (GITHUB_TOKEN). Signup will fail until you paste a token in the CONFIG block of this HTML file (local only).');
-  }
-})();
 </script>
 </body>
 </html>
