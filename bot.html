@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amuthu AI Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<style>
+body { margin:0; padding:0; font-family:'Inter',sans-serif; height:100vh; display:flex; flex-direction:column; background:#e0f7fa; }
+header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#0288d1; color:white; font-weight:400; }
+header #menuBtn { font-size:24px; cursor:pointer; }
+header #userAvatar { width:40px; height:40px; border-radius:50%; object-fit:cover; cursor:pointer; }
+#sideMenu { position:fixed; top:0; left:-250px; width:250px; height:100%; background:#fff; box-shadow:2px 0 8px rgba(0,0,0,0.2); padding:20px; transition:.3s; z-index:999; overflow-y:auto; }
+#sideMenu h3 { margin-top:0; color:#0288d1; }
+#sideMenu ul { list-style:none; padding:0; }
+#sideMenu ul li { padding:12px; border-bottom:1px solid #ddd; cursor:pointer; }
+#sideMenu ul li:hover { background:#b3e5fc; }
+#welcomeText { text-align:center; padding:30px 16px; font-weight:400; color:#01579b; }
+#chatContainer { flex:1; overflow-y:auto; padding:10px 16px; display:flex; flex-direction:column; gap:8px; }
+.bubble { max-width:70%; padding:10px 14px; border-radius:18px; word-wrap:break-word; }
+.user { align-self:flex-end; background:#0288d1; color:white; border-bottom-right-radius:0; }
+.bot { align-self:flex-start; background:#b3e5fc; color:#01579b; border-bottom-left-radius:0; }
+#chatInputContainer { display:flex; padding:10px 16px; background:#e1f5fe; gap:8px; }
+#chatInput { flex:1; padding:10px 16px; border-radius:25px; border:1px solid #b3e5fc; font-weight:400; }
+#sendBtn { background:#0288d1; color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+#sendBtn:hover { background:#0277bd; }
+.popup, .overlay { position:fixed; display:none; justify-content:center; align-items:center; z-index:9999; }
+.popup { background:#0288d1; color:white; padding:20px 25px; border-radius:16px; text-align:center; }
+.overlay { inset:0; background:rgba(0,0,0,0.3); }
+.spinner { width:50px; height:50px; border:5px solid #b3e5fc; border-top-color:#0288d1; border-radius:50%; animation:spin 1s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+footer { padding:6px; text-align:center; font-size:.85rem; color:#01579b; font-weight:300; }
+</style>
+</head>
+<body>
+
+<header>
+  <div id="menuBtn">&#9776;</div>
+  <div id="chatTitle">New Chat</div>
+  <img id="userAvatar" src="" alt="User">
+</header>
+
+<div id="sideMenu">
+  <h3>Menu</h3>
+  <ul>
+    <li id="chatHistoryBtn">Chat History</li>
+    <li id="settingsBtn">Settings</li>
+    <li id="modelBtn">Model Selection</li>
+    <li id="aboutBtn">About</li>
+  </ul>
+</div>
+
+<div id="welcomeText"></div>
+<div id="chatContainer"></div>
+
+<div id="chatInputContainer">
+  <input type="text" id="chatInput" placeholder="Chat in English, Sinhala or Tamil">
+  <button id="sendBtn">&#9658;</button>
+</div>
+
+<div class="overlay" id="loaderOverlay"><div class="spinner"></div></div>
+<div class="popup" id="popupMsg"></div>
+<footer>Made by ninsara.dev | Amuthu AI</footer>
+
+<script>
+let user=JSON.parse(localStorage.getItem('amuthuUser')||'{}');
+if(!user.username) location.href='index.html';
+document.getElementById('userAvatar').src='data:image/png;base64,'+user.avatar_b64;
+
+let chatContainer=document.getElementById('chatContainer');
+let chatTitle=document.getElementById('chatTitle');
+let chatInput=document.getElementById('chatInput');
+let sendBtn=document.getElementById('sendBtn');
+let welcomeText=document.getElementById('welcomeText');
+let loader=document.getElementById('loaderOverlay');
+let popup=document.getElementById('popupMsg');
+
+let messages=[]; 
+let welcomeMessages=[
+  `Welcome ${user.username}, let's chat!`,
+  `Hello ${user.username}! Ready to talk?`,
+  `${user.username}, welcome! Start your conversation now!`
+];
+welcomeText.innerText=welcomeMessages[Math.floor(Math.random()*welcomeMessages.length)];
+
+function showLoader(s=true){loader.style.display=s?'flex':'none';}
+function showPopup(msg,d=2000){popup.innerText=msg; popup.style.display='block'; setTimeout(()=>popup.style.display='none',d);}
+function addMessageBubble(msg,type){let b=document.createElement('div');b.className='bubble '+type;b.innerText=msg;chatContainer.appendChild(b);chatContainer.scrollTop=chatContainer.scrollHeight;}
+
+async function sendMessage(msg){
+  if(!msg.trim()) return;
+  addMessageBubble(msg,'user');
+  chatTitle.innerText=msg;
+  messages.push(msg);
+  localStorage.setItem('amuthuChat',messages.map(encodeURIComponent).join(','));
+  chatInput.value='';
+  showLoader(true);
+  try{
+    let userPrefs=localStorage.getItem('amuthuUserPreferences')||'';
+    let model=localStorage.getItem('amuthuModel')||'multi';
+    let role='normal';
+    if(model==='meetare') role='You are a math/coding assistant.';
+    if(model==='multi') role='You are a multilingual assistant in English, Sinhala, Tamil.';
+    if(model==='picasso') role='You are a creative assistant for songs and stories.';
+    if(userPrefs) role+=` User preferences: ${userPrefs}`;
+    let response=await fetch('https://openrouter.ai/api/v1/chat/completions',{
+      method:'POST',
+      headers:{'Authorization':'Bearer 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','Content-Type':'application/json'},
+      body:JSON.stringify({model:'sk-or-v1',messages:[{role:'system',content:role},{role:'user',content:msg}],temperature:0.7,max_tokens:300})
+    });
+    let data=await response.json();
+    let botMsg=data.choices[0].message.content;
+    addMessageBubble(botMsg,'bot');
+    messages.push(botMsg);
+    localStorage.setItem('amuthuChat',messages.map(encodeURIComponent).join(','));
+  }catch(e){showPopup('Failed to get AI response');}
+  showLoader(false);
+}
+
+sendBtn.addEventListener('click',()=>sendMessage(chatInput.value));
+chatInput.addEventListener('keydown',e=>{if(e.key==='Enter') sendMessage(chatInput.value);});
+
+let menuBtn=document.getElementById('menuBtn');
+let sideMenu=document.getElementById('sideMenu');
+menuBtn.addEventListener('click',()=>{sideMenu.style.left=sideMenu.style.left==='0px'?' -250px':'0px';});
+</script>
+</body>
+</html>
