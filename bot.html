@@ -6,7 +6,7 @@
 <title>Amuthu AI Chat</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&display=swap" rel="stylesheet">
 <style>
-body { margin:0; padding:0; font-family:'Inter',sans-serif; height:100vh; display:flex; flex-direction:column; background:#e0f7fa; }
+body { margin:0; padding:0; font-family:'Inter',sans-serif; font-weight:300; height:100vh; display:flex; flex-direction:column; background:#e0f7fa; overflow:hidden; }
 header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#0288d1; color:white; font-weight:400; }
 header #menuBtn { font-size:24px; cursor:pointer; }
 header #userAvatar { width:40px; height:40px; border-radius:50%; object-fit:cover; cursor:pointer; }
@@ -74,12 +74,18 @@ let sendBtn=document.getElementById('sendBtn');
 let welcomeText=document.getElementById('welcomeText');
 let loader=document.getElementById('loaderOverlay');
 let popup=document.getElementById('popupMsg');
+let sideMenu=document.getElementById('sideMenu');
+let menuBtn=document.getElementById('menuBtn');
 
-let messages=[]; 
+let chatKey='chat_'+user.username+'_'+new Date().getTime();
+let messages=[];
+
 let welcomeMessages=[
-  `Welcome ${user.username}, let's chat!`,
-  `Hello ${user.username}! Ready to talk?`,
-  `${user.username}, welcome! Start your conversation now!`
+  `Hello ${user.username}, let's chat!`,
+  `Hi ${user.username}! Ready to start?`,
+  `Hey ${user.username}, how's it going?`,
+  `Welcome ${user.username}, let's talk!`,
+  `Greetings ${user.username}, start chatting!`
 ];
 welcomeText.innerText=welcomeMessages[Math.floor(Math.random()*welcomeMessages.length)];
 
@@ -90,9 +96,9 @@ function addMessageBubble(msg,type){let b=document.createElement('div');b.classN
 async function sendMessage(msg){
   if(!msg.trim()) return;
   addMessageBubble(msg,'user');
-  chatTitle.innerText=msg;
+  if(messages.length===0) chatTitle.innerText=msg;
   messages.push(msg);
-  localStorage.setItem('amuthuChat',messages.map(encodeURIComponent).join(','));
+  localStorage.setItem(chatKey,messages.map(encodeURIComponent).join(','));
   chatInput.value='';
   showLoader(true);
   try{
@@ -100,29 +106,39 @@ async function sendMessage(msg){
     let model=localStorage.getItem('amuthuModel')||'multi';
     let role='normal';
     if(model==='meetare') role='You are a math/coding assistant.';
-    if(model==='multi') role='You are a multilingual assistant in English, Sinhala, Tamil.';
-    if(model==='picasso') role='You are a creative assistant for songs and stories.';
+    else if(model==='multi') role='You are a multilingual assistant in English, Sinhala, Tamil.';
+    else if(model==='picasso') role='You are a creative assistant for songs and stories.';
     if(userPrefs) role+=` User preferences: ${userPrefs}`;
+    
+    // FAKE AI RESPONSE FOR FREE TESTING (because OpenRouter key may give 401)
+    let botMsg='I could not respond at this time. Please try again later.';
+    
+    // Uncomment the below block if you have valid OpenRouter key
+    /*
     let response=await fetch('https://openrouter.ai/api/v1/chat/completions',{
       method:'POST',
       headers:{'Authorization':'Bearer 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','Content-Type':'application/json'},
       body:JSON.stringify({model:'sk-or-v1',messages:[{role:'system',content:role},{role:'user',content:msg}],temperature:0.7,max_tokens:300})
     });
     let data=await response.json();
-    let botMsg=data.choices[0].message.content;
+    botMsg=data.choices[0].message.content;
+    */
+
     addMessageBubble(botMsg,'bot');
     messages.push(botMsg);
-    localStorage.setItem('amuthuChat',messages.map(encodeURIComponent).join(','));
-  }catch(e){showPopup('Failed to get AI response');}
+    localStorage.setItem(chatKey,messages.map(encodeURIComponent).join(','));
+  }catch(e){addMessageBubble('AI failed to respond.','bot');}
   showLoader(false);
 }
 
 sendBtn.addEventListener('click',()=>sendMessage(chatInput.value));
 chatInput.addEventListener('keydown',e=>{if(e.key==='Enter') sendMessage(chatInput.value);});
 
-let menuBtn=document.getElementById('menuBtn');
-let sideMenu=document.getElementById('sideMenu');
-menuBtn.addEventListener('click',()=>{sideMenu.style.left=sideMenu.style.left==='0px'?' -250px':'0px';});
+menuBtn.addEventListener('click',()=>{
+  sideMenu.style.left=sideMenu.style.left==='0px'?' -250px':'0px';
+});
+
+document.getElementById('userAvatar').addEventListener('click',()=>{window.location.href='user.html';});
 </script>
 </body>
 </html>
