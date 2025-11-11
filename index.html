@@ -5,104 +5,109 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Amuthu AI - Register</title>
 <style>
-  /* Body & card */
-  body {
-    margin:0;
-    padding:0;
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg,#171717,#1a1a1a);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    overflow:hidden; /* unscrollable */
-    user-select:none; /* prevent selection */
-  }
-
-  .card {
-    background:#222;
-    border-radius:20px;
-    padding:30px 20px 40px 20px;
-    width:90%;
-    max-width:400px;
-    text-align:center;
-    position:relative;
-  }
-
-  /* Logo */
-  .logo {
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    object-fit:cover;
-    border:3px solid #444;
-    transition:.3s;
-    margin-top:-80px;
-    margin-bottom:20px;
-  }
-  .logo:hover{
-    transform:scale(1.05);
-    box-shadow:0 0 10px #0cf;
-  }
-
-  h2 {
-    color:#0cf;
-    margin-bottom:15px;
-  }
-
-  /* Form */
-  form { display:flex; flex-direction:column; gap:12px; }
-  input {
-    padding:12px;
-    border-radius:8px;
-    border:none;
-    background:#333;
-    color:white;
-  }
-  button {
-    padding:12px;
-    border:none;
-    border-radius:8px;
-    background:#0cf;
-    color:white;
-    font-weight:600;
-    cursor:pointer;
-    margin-top:10px;
-  }
-  button:hover { background:#09f; }
-
-  /* Popup */
-  .popup {
-    position:fixed;
-    top:50%; left:50%;
-    transform:translate(-50%,-50%);
-    background:rgba(0,0,0,0.95);
-    color:white;
-    padding:20px 25px;
-    border-radius:12px;
-    display:none;
-    z-index:9999;
-    text-align:center;
-  }
-
-  /* Loader overlay */
-  .overlay {
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.6);
-    display:none;
-    justify-content:center;
-    align-items:center;
-    z-index:9998;
-  }
-  .spinner {
-    width:50px; height:50px;
-    border:5px solid #444;
-    border-top-color:#0cf;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-  }
-  @keyframes spin { to { transform:rotate(360deg); } }
+body {
+  margin:0;
+  padding:0;
+  font-family: 'Poppins', sans-serif;
+  background:#e0f7fa;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  overflow:hidden;
+  user-select:none;
+}
+.card {
+  background:#fff;
+  border-radius:24px;
+  padding:40px 20px;
+  width:320px;
+  text-align:center;
+  box-shadow:0 6px 20px rgba(0,0,0,0.15);
+  position:relative;
+}
+.logo-container {
+  position:relative;
+  margin-bottom:20px;
+}
+.logo {
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid #0288d1;
+  cursor:pointer;
+  transition:.3s;
+}
+.logo:hover { transform:scale(1.05); box-shadow:0 0 12px #0288d1; }
+#preview {
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  object-fit:cover;
+  margin-top:10px;
+  display:none;
+  border:2px solid #0288d1;
+}
+h2 {
+  margin-bottom:15px;
+  color:#0288d1;
+}
+form {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+input {
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #b3e5fc;
+  background:#e1f5fe;
+  color:#01579b;
+  font-weight:500;
+}
+button {
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:#0288d1;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  transition:.3s;
+}
+button:hover { background:#0277bd; }
+.popup {
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:#0288d1;
+  color:white;
+  padding:20px 25px;
+  border-radius:16px;
+  display:none;
+  z-index:9999;
+  text-align:center;
+}
+.overlay {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.3);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9998;
+}
+.spinner {
+  width:50px;
+  height:50px;
+  border:5px solid #b3e5fc;
+  border-top-color:#0288d1;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -114,8 +119,11 @@
 <div class="popup" id="popupMsg"></div>
 
 <div class="card" id="registerCard">
-  <img src="https://raw.githubusercontent.com/ETDkF80mtM6dm7QToAegx7evVnsDL4Up/SWdHYCXxShrpE3yWHQEuDmvdO22xshznIzeWUCcqLeZsWrDUgZUAwLXfETE3mPjPSWdHYC/refs/heads/main/unnamed.png" class="logo" alt="Amuthu AI">
-  <h2>Register to Amuthu AI</h2>
+  <div class="logo-container">
+    <img src="https://raw.githubusercontent.com/ETDkF80mtM6dm7QToAegx7evVnsDL4Up/SWdHYCXxShrpE3yWHQEuDmvdO22xshznIzeWUCcqLeZsWrDUgZUAwLXfETE3mPjPSWdHYC/refs/heads/main/unnamed.png" class="logo" alt="Amuthu AI">
+    <img id="preview">
+  </div>
+  <h2>Register</h2>
   <form id="regForm">
     <input type="file" accept="image/*" id="profilePic" required>
     <input type="text" placeholder="Username" id="username" required>
@@ -127,73 +135,43 @@
 </div>
 
 <script>
-  // Disable right click
-  document.addEventListener('contextmenu', e=>e.preventDefault());
-  // Disable keys: F12, Ctrl+Shift+I/J/C, Ctrl+U
-  document.addEventListener('keydown', e=>{
-    if(e.key==='F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) || (e.ctrlKey && e.key==='u')) {
-      e.preventDefault();
-    }
-  });
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key.toUpperCase()))||(e.ctrlKey&&e.key==='u'))e.preventDefault();});
+const regForm=document.getElementById('regForm');
+const loader=document.getElementById('loaderOverlay');
+const popup=document.getElementById('popupMsg');
+const preview=document.getElementById('preview');
 
-  const regForm = document.getElementById('regForm');
-  const loader = document.getElementById('loaderOverlay');
-  const popup = document.getElementById('popupMsg');
-  const registerCard = document.getElementById('registerCard');
+window.addEventListener('load',()=>{const u=localStorage.getItem('amuthuUser');if(u)window.location.href='bot.html';});
 
-  // On load: check if user exists
-  window.addEventListener('load', ()=>{
-    const user = localStorage.getItem('amuthuUser');
-    if(user){ window.location.href='bot.html'; }
-  });
-
-  // Convert image to base64
-  function imgToBase64(file){
-    return new Promise((resolve,reject)=>{
-      const reader = new FileReader();
-      reader.onload = ()=>resolve(reader.result.split(',')[1]); // remove data:image/... prefix
-      reader.onerror=reject;
-      reader.readAsDataURL(file);
-    });
+document.getElementById('profilePic').addEventListener('change',async e=>{
+  const file=e.target.files[0];
+  if(file){
+    const reader=new FileReader();
+    reader.onload=()=>{preview.src=reader.result;preview.style.display='block';}
+    reader.readAsDataURL(file);
   }
+});
 
-  function showLoader(show=true){ loader.style.display=show?'flex':'none'; }
-  function showPopup(msg, duration=2000){
-    popup.innerText = msg;
-    popup.style.display='block';
-    setTimeout(()=>popup.style.display='none', duration);
-  }
-
-  regForm.addEventListener('submit', async e=>{
-    e.preventDefault();
-    const file = document.getElementById('profilePic').files[0];
-    const username = document.getElementById('username').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-
-    if(password!==confirmPassword){
-      showPopup('Passwords do not match!');
-      return;
-    }
-    showLoader(true);
-    try{
-      const avatar_b64 = await imgToBase64(file);
-      // Save to localStorage
-      const userData = { username,email,password,avatar_b64,created_at:new Date().toISOString() };
-      localStorage.setItem('amuthuUser', JSON.stringify(userData));
-      setTimeout(()=>{
-        showLoader(false);
-        showPopup('Registered successfully! Redirecting...', 1500);
-        setTimeout(()=> window.location.href='bot.html',1500);
-      },1000);
-    }catch(err){
-      console.error(err);
-      showLoader(false);
-      showPopup('Failed to process image');
-    }
-  });
-
+function imgToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});}
+function showLoader(s=true){loader.style.display=s?'flex':'none';}
+function showPopup(msg,d=2000){popup.innerText=msg;popup.style.display='block';setTimeout(()=>popup.style.display='none',d);}
+regForm.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const file=document.getElementById('profilePic').files[0];
+  const username=document.getElementById('username').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const password=document.getElementById('password').value;
+  const confirmPassword=document.getElementById('confirmPassword').value;
+  if(password!==confirmPassword){showPopup('Passwords do not match!');return;}
+  showLoader(true);
+  try{
+    const avatar_b64=await imgToBase64(file);
+    const userData={username,email,password,avatar_b64,created_at:new Date().toISOString()};
+    localStorage.setItem('amuthuUser',JSON.stringify(userData));
+    setTimeout(()=>{showLoader(false);showPopup('Registered successfully!',1000);setTimeout(()=>window.location.href='bot.html',1000);},800);
+  }catch(err){showLoader(false);showPopup('Failed to process image');}
+});
 </script>
 </body>
 </html>
