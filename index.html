@@ -143,7 +143,6 @@
             overflow-y: auto;
             background-color: var(--chat-bg);
             transition: background-color var(--transition-speed);
-            /* Fixed scrolling issue */
             -webkit-overflow-scrolling: touch;
             overscroll-behavior: contain;
         }
@@ -736,7 +735,9 @@
 
         .logo {
             width: 120px;
-            height: 60px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
             margin-bottom: 20px;
         }
 
@@ -946,7 +947,6 @@
         </div>
     </div>
 
-    <!-- Popup for confirmation dialogs -->
     <div class="popup" id="confirmPopup">
         <div class="popup-title" id="popupTitle">Confirmation</div>
         <div class="popup-message" id="popupMessage">Are you sure?</div>
@@ -957,24 +957,21 @@
     </div>
 
     <script>
-        // Flag to prevent multiple initializations
         let isInitialized = false;
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Prevent multiple initializations
             if (isInitialized) return;
             isInitialized = true;
             
             const userData = localStorage.getItem('userData');
             
-            // Check if user is already registered
             if (userData) {
                 initializeChat();
                 return;
             }
             
-            // Register form
-            document.getElementById('regRegisterBtn').addEventListener('click', function() {
+            const registerBtn = document.getElementById('regRegisterBtn');
+            registerBtn.addEventListener('click', function() {
                 const fullName = document.getElementById('regFullName').value.trim();
                 const email = document.getElementById('regEmail').value.trim();
                 const password = document.getElementById('regPassword').value.trim();
@@ -996,7 +993,6 @@
                     return;
                 }
                 
-                // Check if user already exists
                 const users = JSON.parse(localStorage.getItem('users') || '[]');
                 if (users.find(u => u.email === email)) {
                     showNotification('User with this email already exists.', 'error');
@@ -1011,11 +1007,8 @@
                     registeredAt: new Date().toISOString()
                 };
                 
-                // Save user to users array
                 users.push(newUser);
                 localStorage.setItem('users', JSON.stringify(users));
-                
-                // Save current user data
                 localStorage.setItem('userData', JSON.stringify(newUser));
                 
                 showNotification('Registration successful! Loading chat...', 'success');
@@ -1029,13 +1022,12 @@
             function initializeChat() {
                 const user = JSON.parse(localStorage.getItem('userData'));
                 const welcomeMessages = [
-                    `සුබ උදාසයක් ${user.fullName}! කතා කරමු`,
-                    `හෙලෝ ${user.fullName}! මම ඔබට අද කෙසේ උදව් කළ හැකිද?`,
-                    `හායි ${user.fullName}! කතා කිරීමට සූදානම්ද?`
+                    `Welcome ${user.fullName}! Let's Chat`,
+                    `Hello ${user.fullName}! How can I help you today?`,
+                    `Hi ${user.fullName}! Ready for a conversation?`
                 ];
                 const randomWelcome = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
                 
-                // Use appContainer instead of document.body
                 const appContainer = document.getElementById('appContainer');
                 appContainer.innerHTML = `
                     <div class="app-header">
@@ -1222,7 +1214,6 @@
                     </div>
                 `;
                 
-                // Initialize the chat app
                 initChatApp();
             }
             
@@ -1232,7 +1223,6 @@
                 const initial = user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U';
                 profileInitial.textContent = initial;
                 
-                // Set profile background color based on initial
                 const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722', '#795548', '#607d8b'];
                 const colorIndex = initial.charCodeAt(0) % colors.length;
                 document.getElementById('userProfile').style.backgroundColor = colors[colorIndex];
@@ -1261,7 +1251,6 @@
                 const userPreferences = localStorage.getItem('userPreferences') || '';
                 document.getElementById('userPreferences').value = userPreferences;
 
-                // Set profile popup info
                 document.getElementById('profileName').textContent = user.fullName;
                 document.getElementById('profileEmail').textContent = user.email;
                 document.getElementById('profileCircle').textContent = initial;
@@ -1303,27 +1292,23 @@
                 
                 const apiKey = decodeSecret(G83H82R3);
 
-                // Popup elements
                 const confirmPopup = document.getElementById('confirmPopup');
                 const popupTitle = document.getElementById('popupTitle');
                 const popupMessage = document.getElementById('popupMessage');
                 const popupCancel = document.getElementById('popupCancel');
                 const popupConfirm = document.getElementById('popupConfirm');
                 
-                // Function to show confirmation popup
                 function showConfirmationPopup(title, message, onConfirm) {
                     popupTitle.textContent = title;
                     popupMessage.textContent = message;
                     confirmPopup.classList.add('active');
                     overlay.classList.add('active');
                     
-                    // Remove existing event listeners
                     const newPopupConfirm = popupConfirm.cloneNode(true);
                     const newPopupCancel = popupCancel.cloneNode(true);
                     popupConfirm.parentNode.replaceChild(newPopupConfirm, popupConfirm);
                     popupCancel.parentNode.replaceChild(newPopupCancel, popupCancel);
                     
-                    // Add new event listeners
                     document.getElementById('popupConfirm').addEventListener('click', function() {
                         confirmPopup.classList.remove('active');
                         overlay.classList.remove('active');
@@ -1392,7 +1377,6 @@
                     window.location.href = 'about.html';
                 });
 
-                // Delete all chats button in menu
                 deleteAllChatsItem.addEventListener('click', function() {
                     showConfirmationPopup(
                         'Delete All Chats',
@@ -1410,13 +1394,8 @@
                         'Logout',
                         'Your account is permanently deleted. Are you sure you want to continue?',
                         function() {
-                            // Clear all localStorage
                             localStorage.clear();
-                            
-                            // Show notification
                             showNotification('Your account is permanently deleted', 'success');
-                            
-                            // Reload page after a short delay
                             setTimeout(() => {
                                 location.reload();
                             }, 1500);
@@ -1484,7 +1463,6 @@
                 sendButton.addEventListener('click', sendMessage);
 
                 function adjustInputContainer() {
-                    // Adjust input container when keyboard is visible
                     const inputContainer = document.getElementById('inputContainer');
                     const viewportHeight = window.innerHeight;
                     const inputHeight = inputContainer.offsetHeight;
@@ -1508,7 +1486,6 @@
                     sideMenu.classList.remove('open');
                     overlay.classList.remove('active');
                     
-                    // Clear the chat messages container to prevent previous chat bubbles from appearing
                     chatMessages.innerHTML = '';
                 }
 
@@ -1524,7 +1501,6 @@
                         const shortTitle = generateShortTitle(message);
                         chatTitle.textContent = shortTitle;
                         
-                        // Create new chat ID if this is a new chat
                         if (!currentChatId) {
                             currentChatId = Date.now().toString();
                         }
@@ -1594,20 +1570,13 @@
                         time: now.toISOString()
                     });
                     
-                    // Auto-save after each message
                     saveCurrentChat();
                 }
 
                 function formatResponse(text) {
-                    // Format numbered lists in a cleaner way
                     let formattedText = text;
-                    
-                    // Replace patterns like "1. Item" with "1. Item: [details]"
                     formattedText = formattedText.replace(/(\d+\.\s*)([^:]+)(:)/g, '$1$2$3 ');
-                    
-                    // Replace patterns like "1**Item**:detail2.**Item**" with "1. Item: [details] 2. Item: [details]"
                     formattedText = formattedText.replace(/(\d+\.\s*)([^*]+)(\*\*)([^*]+)(\*\*)/g, '$1$2: $3');
-                    
                     return formattedText;
                 }
 
@@ -1645,10 +1614,299 @@
                         let systemPrompt = '';
                         switch (selectedModel) {
                             case 'meetare':
-                                systemPrompt = `ඔබ අමුතු මීටරේ, ගණිතමය සහ කේතීකරණ කාර්යයන් සඳහා විශේෂඥ ආධාරකයෙකි. ගණිත ගැටළු සහ කේත ප්‍රශ්න සඳහා නිවැරදි, විස්තර පිළිතුරු සපයන්න. ඔබට ඉංග්‍රීසි, සිංහල සහ දෙමළ භාෂාවෙන් සන්නිවේදනය කළ හැකිය. තේරුම් ගැනීමට පහසු, සාමාන්‍ය භාෂාව භාවිතා කරන්න. ඔබේ හැකියාවන් හෝ ආකෘතිය පිළිබඳව සාකච්ඡා නොකරන්න. ගණිතය සහ කේතීකරණය පිළිබඳ උපකාරී තොරතුරු සපයීමට පමණක් අවධානය යොමු කරන්න. පද්ධතිය Aveesha Ninsara Pelawaththa විසින් නිර්මාණය කරන ලදී.`;
+                                systemPrompt = `You are Amuthu Meetare, a specialized AI assistant for mathematical and coding tasks. Provide accurate, detailed answers to math problems and coding questions. You can communicate in English, Sinhala, and Tamil. Use simple, everyday language that is easy to understand. Do not discuss your own capabilities or model itself. Focus only on providing helpful information about math and coding. The system was created by Aveesha Ninsara Pelawaththa.`;
                                 break;
                             case 'multi':
-                                systemPrompt = `ඔබ අමුතු මල්ටි, දෛනික කාර්යයන් සඳහා බහුකාර්ය ආධාරකයෙකි. ඔබට ඉංග්‍රීසි, සිංහල සහ දෙමළ භාෂාවෙන් සාමාන්‍ය භාෂාව භාවිතා කරමින් ප්‍රවාහණශීලීව සන්නිවේදනය කළ හැකිය. උපකාරී, මිත්‍රීය සහ සංවාදාත්මක වන්න. ඔබේ හැකියාවන් හෝ ආකෘතිය පිළිබඳව සාකච්ඡා නොකරන්න. උපකාරී තොරතුරු සපයීමට පමණක් අවධානය යොමු කරන්න. පද්ධතිය Aveesha Ninsara Pelawaththa විසින් නිර්මාණය කරන ලදී.`;
+                                systemPrompt = `You are Amuthu Multi, a versatile AI assistant for everyday tasks. You can communicate fluently in English, Sinhala, and Tamil using simple, everyday language. Be helpful, friendly, and conversational. Do not discuss your own capabilities or model itself. Focus only on providing helpful information. The system was created by Aveesha Ninsara Pelawaththa.`;
                                 break;
                             case 'picasso':
-                                systemPrompt = `ඔබ අමුතු පිකාසෝ, ගීත, කවි සහ කලාත්මක අන
+                                systemPrompt = `You are Amuthu Picasso, a creative AI assistant specialized in songs, poetry, and artistic content. You can communicate in English, Sinhala, and Tamil using simple, everyday language. Be creative, expressive, and inspiring. Do not discuss your own capabilities or model itself. Focus only on providing helpful information about creative content. The system was created by Aveesha Ninsara Pelawaththa.`;
+                                break;
+                            case 'bro':
+                                systemPrompt = `You are Amuthu Bro, a friendly AI assistant for casual chatting. Use Sinhala slang words like අම්මටසිරි, බොක්ක, හලෝ මචං, කොහොමද, සුපිරි in your responses. Be friendly, casual, and conversational. Do not discuss your own capabilities or model itself. Focus only on providing helpful information. The system was created by Aveesha Ninsara Pelawaththa.`;
+                                break;
+                            default:
+                                systemPrompt = `You are Amuthu AI, a helpful assistant. You can communicate in English, Sinhala, and Tamil using simple, everyday language. Do not discuss your own capabilities or model itself. Focus only on providing helpful information. The system was created by Aveesha Ninsara Pelawaththa.`;
+                        }
+                        
+                        if (user.fullName) {
+                            systemPrompt += ` The user's name is ${user.fullName}. Please address them by this name in your responses.`;
+                        }
+                        
+                        if (userPreferences) {
+                            systemPrompt += ` User preferences: ${userPreferences}`;
+                        }
+                        
+                        let conversationHistory = [{
+                            role: "system",
+                            content: systemPrompt
+                        }];
+                        
+                        currentChat.forEach(msg => {
+                            conversationHistory.push({
+                                role: msg.sender === 'user' ? 'user' : 'assistant',
+                                content: msg.text
+                            });
+                        });
+                        
+                        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${apiKey}`,
+                                "HTTP-Referer": window.location.href,
+                                "X-Title": "Amuthu AI"
+                            },
+                            body: JSON.stringify({
+                                model: "meta-llama/llama-3-70b-instruct",
+                                messages: conversationHistory,
+                                temperature: 0.7,
+                                max_tokens: 500
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        const data = await response.json();
+                        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+                            throw new Error('Invalid response format');
+                        }
+                        
+                        let botMessage = data.choices[0].message.content;
+                        
+                        if (selectedModel === 'meetare' && (
+                            userMessage.toLowerCase().includes('song') || 
+                            userMessage.toLowerCase().includes('poem') || 
+                            userMessage.toLowerCase().includes('creative') ||
+                            userMessage.toLowerCase().includes('art')
+                        )) {
+                            botMessage = `It looks like you're asking for creative content like songs or poems. For better results, I recommend switching to Amuthu Picasso model which is specialized for creative content. Would you like me to switch to that model for you?`;
+                        } else if (selectedModel === 'picasso' && (
+                            userMessage.toLowerCase().includes('math') || 
+                            userMessage.toLowerCase().includes('code') || 
+                            userMessage.toLowerCase().includes('calculate') ||
+                            userMessage.toLowerCase().includes('programming')
+                        )) {
+                            botMessage = `It looks like you're asking for help with math or coding. For better results, I recommend switching to Amuthu Meetare model which is specialized for mathematical and coding tasks. Would you like me to switch to that model for you?`;
+                        }
+                        
+                        hideTypingIndicator();
+                        addMessage(botMessage, 'bot');
+                        isLoading = false;
+                    } catch (error) {
+                        console.error('Error getting bot response:', error);
+                        hideTypingIndicator();
+                        addMessage('Sorry, I encountered an error while processing your request. Please try again.', 'bot');
+                        isLoading = false;
+                    }
+                }
+
+                function saveCurrentChat() {
+                    if (currentChat.length === 0) return;
+                    
+                    const shortTitle = currentChat[0].sender === 'user' ? 
+                        generateShortTitle(currentChat[0].text) : 
+                        'New Chat';
+                    
+                    const chatData = {
+                        id: currentChatId || Date.now().toString(),
+                        title: shortTitle,
+                        messages: currentChat,
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem(`chat_${chatData.id}`, JSON.stringify(chatData));
+                    
+                    const chatHistoryList = chatHistoryData ? chatHistoryData.split(',') : [];
+                    
+                    if (!chatHistoryList.includes(chatData.id)) {
+                        chatHistoryList.unshift(chatData.id);
+                    }
+                    
+                    if (chatHistoryList.length > 10) {
+                        const excessIds = chatHistoryList.slice(10);
+                        excessIds.forEach(id => {
+                            localStorage.removeItem(`chat_${id}`);
+                        });
+                        chatHistoryList.splice(10);
+                    }
+                    
+                    localStorage.setItem('title_chat', chatHistoryList.join(','));
+                    
+                    const existingIndex = chatHistory.findIndex(chat => chat.id === chatData.id);
+                    if (existingIndex >= 0) {
+                        chatHistory[existingIndex] = chatData;
+                    } else {
+                        chatHistory.unshift(chatData);
+                        if (chatHistory.length > 10) {
+                            chatHistory = chatHistory.slice(0, 10);
+                        }
+                    }
+                }
+
+                function loadChatHistory() {
+                    const chatHistoryBody = document.getElementById('chatHistoryBody');
+                    
+                    if (chatHistory.length === 0) {
+                        chatHistoryBody.innerHTML = '<p>No chat history yet.</p><button class="delete-all-button" id="deleteAllButton">Delete All Chats</button>';
+                        return;
+                    }
+                    
+                    chatHistoryBody.innerHTML = '<button class="delete-all-button" id="deleteAllButton">Delete All Chats</button>';
+                    
+                    chatHistory.forEach(chat => {
+                        const chatItem = document.createElement('div');
+                        chatItem.className = 'chat-history-item';
+                        
+                        const date = new Date(chat.createdAt);
+                        const dateString = date.toLocaleDateString();
+                        
+                        const firstUserMessage = chat.messages.find(msg => msg.sender === 'user');
+                        const preview = firstUserMessage ? 
+                            (firstUserMessage.text.length > 50 ? firstUserMessage.text.substring(0, 50) + '...' : firstUserMessage.text) : 
+                            'No messages';
+                        
+                        chatItem.innerHTML = `
+                            <div class="chat-history-title">${escapeHtml(chat.title)}</div>
+                            <div class="chat-history-preview">${escapeHtml(preview)}</div>
+                            <div class="chat-history-date">${dateString}</div>
+                            <button class="delete-chat" data-id="${chat.id}">
+                                <span class="material-icons">delete</span>
+                            </button>
+                        `;
+                        
+                        chatItem.addEventListener('click', function(e) {
+                            if (!e.target.closest('.delete-chat')) {
+                                loadChat(chat.id);
+                                document.getElementById('chatHistoryModal').classList.remove('active');
+                                overlay.classList.remove('active');
+                            }
+                        });
+                        
+                        const deleteButton = chatItem.querySelector('.delete-chat');
+                        deleteButton.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            deleteChat(chat.id);
+                        });
+                        
+                        chatHistoryBody.appendChild(chatItem);
+                    });
+                    
+                    document.getElementById('deleteAllButton').addEventListener('click', deleteAllChats);
+                }
+
+                function deleteChat(chatId) {
+                    if (confirm('Are you sure you want to delete this chat?')) {
+                        localStorage.removeItem(`chat_${chatId}`);
+                        
+                        const chatHistoryList = chatHistoryData ? chatHistoryData.split(',') : [];
+                        const index = chatHistoryList.indexOf(chatId);
+                        if (index > -1) {
+                            chatHistoryList.splice(index, 1);
+                            localStorage.setItem('title_chat', chatHistoryList.join(','));
+                        }
+                        
+                        chatHistory = chatHistory.filter(chat => chat.id !== chatId);
+                        
+                        if (currentChatId === chatId) {
+                            startNewChat();
+                        }
+                        
+                        loadChatHistory();
+                    }
+                }
+
+                function deleteAllChats() {
+                    if (confirm('Are you sure you want to delete all chats? This action cannot be undone.')) {
+                        const chatHistoryList = chatHistoryData ? chatHistoryData.split(',') : [];
+                        
+                        chatHistoryList.forEach(id => {
+                            localStorage.removeItem(`chat_${id}`);
+                        });
+                        
+                        localStorage.removeItem('title_chat');
+                        
+                        chatHistory = [];
+                        
+                        startNewChat();
+                        
+                        loadChatHistory();
+                    }
+                }
+
+                function loadChat(chatId) {
+                    const chatData = localStorage.getItem(`chat_${chatId}`);
+                    if (!chatData) return;
+                    
+                    const chat = JSON.parse(chatData);
+                    currentChat = chat.messages;
+                    currentChatId = chat.id;
+                    chatTitle.textContent = chat.title;
+                    
+                    welcomeContainer.style.display = 'none';
+                    chatContainer.style.display = 'flex';
+                    quickActions.style.display = 'none';
+                    
+                    chatMessages.innerHTML = '';
+                    
+                    currentChat.forEach(msg => {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = `message ${msg.sender}`;
+                        
+                        const time = new Date(msg.time);
+                        const timeString = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        
+                        if (msg.sender === 'user') {
+                            messageDiv.innerHTML = `
+                                <div class="message-avatar">${profileInitial.outerHTML}</div>
+                                <div>
+                                    <div class="message-bubble">${escapeHtml(msg.text)}</div>
+                                    <div class="message-time">${timeString}</div>
+                                </div>
+                            `;
+                        } else {
+                            messageDiv.innerHTML = `
+                                <div class="message-avatar">
+                                    <span class="material-icons">smart_toy</span>
+                                </div>
+                                <div>
+                                    <div class="message-bubble">${formatResponse(msg.text)}</div>
+                                    <div class="message-time">${timeString}</div>
+                                </div>
+                            `;
+                        }
+                        
+                        chatMessages.appendChild(messageDiv);
+                    });
+                    
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+
+                function escapeHtml(text) {
+                    const map = {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#039;'
+                    };
+                    
+                    return text.replace(/[&<>"']/g, m => map[m]);
+                }
+
+                function showNotification(message, type = 'info') {
+                    const notification = document.getElementById('notification');
+                    notification.textContent = message;
+                    notification.className = `notification show ${type}`;
+                    
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
