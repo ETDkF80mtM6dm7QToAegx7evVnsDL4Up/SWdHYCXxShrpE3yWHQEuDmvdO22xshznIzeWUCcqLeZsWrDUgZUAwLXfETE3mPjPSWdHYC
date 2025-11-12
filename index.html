@@ -22,319 +22,44 @@
             --shadow-3: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
             --border-radius: 16px;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--background);
-            color: var(--text-primary);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 400px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .card {
-            background-color: var(--background);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-3);
-            padding: 32px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 24px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--primary-dark);
-        }
-
-        .subtitle {
-            font-size: 16px;
-            font-weight: 400;
-            color: var(--text-secondary);
-            margin-bottom: 32px;
-            text-align: center;
-        }
-
-        .form-group {
-            width: 100%;
-            margin-bottom: 16px;
-        }
-
-        .form-field {
-            position: relative;
-            margin-bottom: 16px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 16px 12px 8px 12px;
-            border: none;
-            border-bottom: 1px solid var(--text-secondary);
-            background-color: transparent;
-            font-family: 'Inter', sans-serif;
-            font-size: 16px;
-            font-weight: 400;
-            color: var(--text-primary);
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .form-input:focus {
-            border-bottom-color: var(--primary);
-        }
-
-        .form-label {
-            position: absolute;
-            left: 12px;
-            top: 16px;
-            font-size: 16px;
-            font-weight: 400;
-            color: var(--text-secondary);
-            pointer-events: none;
-            transition: all 0.3s;
-        }
-
-        .form-input:focus ~ .form-label,
-        .form-input:not(:placeholder-shown) ~ .form-label {
-            top: 4px;
-            font-size: 12px;
-            color: var(--primary);
-        }
-
-        .profile-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 24px;
-            width: 100%;
-        }
-
-        .profile-preview {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: var(--surface);
-            margin-bottom: 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .profile-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-preview .material-icons {
-            font-size: 48px;
-            color: var(--text-secondary);
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .file-button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 24px;
-            padding: 10px 24px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s, box-shadow 0.3s;
-            box-shadow: var(--shadow-1);
-        }
-
-        .file-button:hover {
-            background-color: var(--primary-dark);
-            box-shadow: var(--shadow-2);
-        }
-
-        .register-button {
-            width: 100%;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 24px;
-            padding: 14px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s, box-shadow 0.3s;
-            margin-top: 8px;
-            box-shadow: var(--shadow-1);
-        }
-
-        .register-button:hover {
-            background-color: var(--primary-dark);
-            box-shadow: var(--shadow-2);
-        }
-
-        .footer {
-            position: absolute;
-            bottom: 16px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            font-size: 12px;
-            color: var(--text-secondary);
-            font-family: 'Inter', sans-serif;
-            font-weight: 300;
-        }
-
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-
-        .loader.active {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .loader-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--primary-light);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1001;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-
-        .popup.active {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .popup-content {
-            background-color: var(--background);
-            border-radius: var(--border-radius);
-            padding: 24px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: var(--shadow-3);
-            transform: translateY(20px);
-            transition: transform 0.3s;
-        }
-
-        .popup.active .popup-content {
-            transform: translateY(0);
-        }
-
-        .popup-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: var(--text-primary);
-        }
-
-        .popup-message {
-            font-size: 16px;
-            font-weight: 400;
-            margin-bottom: 24px;
-            color: var(--text-secondary);
-        }
-
-        .popup-button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 24px;
-            padding: 10px 24px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            float: right;
-        }
-
-        .popup-button:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .error-popup .popup-title {
-            color: var(--error);
-        }
-
-        .error-popup .popup-button {
-            background-color: var(--error);
-        }
-
-        .error-popup .popup-button:hover {
-            background-color: #d32f2f;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--background); color: var(--text-primary); height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; }
+        .container { width: 100%; max-width: 400px; padding: 24px; display: flex; flex-direction: column; align-items: center; }
+        .card { background-color: var(--background); border-radius: var(--border-radius); box-shadow: var(--shadow-3); padding: 32px; width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .logo { width: 120px; height: 120px; margin-bottom: 24px; border-radius: 50%; object-fit: cover; }
+        .title { font-size: 24px; font-weight: 600; margin-bottom: 8px; color: var(--primary-dark); }
+        .subtitle { font-size: 16px; font-weight: 400; color: var(--text-secondary); margin-bottom: 32px; text-align: center; }
+        .form-group { width: 100%; margin-bottom: 16px; }
+        .form-field { position: relative; margin-bottom: 16px; }
+        .form-input { width: 100%; padding: 16px 12px 8px 12px; border: none; border-bottom: 1px solid var(--text-secondary); background-color: transparent; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 400; color: var(--text-primary); outline: none; transition: border-color 0.3s; }
+        .form-input:focus { border-bottom-color: var(--primary); }
+        .form-label { position: absolute; left: 12px; top: 16px; font-size: 16px; font-weight: 400; color: var(--text-secondary); pointer-events: none; transition: all 0.3s; }
+        .form-input:focus ~ .form-label, .form-input:not(:placeholder-shown) ~ .form-label { top: 4px; font-size: 12px; color: var(--primary); }
+        .profile-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; width: 100%; }
+        .profile-preview { width: 100px; height: 100px; border-radius: 50%; background-color: var(--surface); margin-bottom: 16px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .profile-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-preview .material-icons { font-size: 48px; color: var(--text-secondary); }
+        .file-input { display: none; }
+        .file-button { background-color: var(--primary); color: white; border: none; border-radius: 24px; padding: 10px 24px; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px; cursor: pointer; transition: background-color 0.3s, box-shadow 0.3s; box-shadow: var(--shadow-1); }
+        .file-button:hover { background-color: var(--primary-dark); box-shadow: var(--shadow-2); }
+        .register-button { width: 100%; background-color: var(--primary); color: white; border: none; border-radius: 24px; padding: 14px; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 16px; cursor: pointer; transition: background-color 0.3s, box-shadow 0.3s; margin-top: 8px; box-shadow: var(--shadow-1); }
+        .register-button:hover { background-color: var(--primary-dark); box-shadow: var(--shadow-2); }
+        .footer { position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; font-size: 12px; color: var(--text-secondary); font-family: 'Inter', sans-serif; font-weight: 300; }
+        .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: opacity 0.3s, visibility 0.3s; }
+        .loader.active { visibility: visible; opacity: 1; }
+        .loader-spinner { width: 50px; height: 50px; border: 4px solid var(--primary-light); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 1001; visibility: hidden; opacity: 0; transition: opacity 0.3s, visibility 0.3s; }
+        .popup.active { visibility: visible; opacity: 1; }
+        .popup-content { background-color: var(--background); border-radius: var(--border-radius); padding: 24px; width: 90%; max-width: 400px; box-shadow: var(--shadow-3); transform: translateY(20px); transition: transform 0.3s; }
+        .popup.active .popup-content { transform: translateY(0); }
+        .popup-title { font-size: 20px; font-weight: 600; margin-bottom: 16px; color: var(--text-primary); }
+        .popup-message { font-size: 16px; font-weight: 400; margin-bottom: 24px; color: var(--text-secondary); }
+        .popup-button { background-color: var(--primary); color: white; border: none; border-radius: 24px; padding: 10px 24px; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px; cursor: pointer; transition: background-color 0.3s; float: right; }
+        .popup-button:hover { background-color: var(--primary-dark); }
+        .error-popup .popup-title { color: var(--error); }
+        .error-popup .popup-button { background-color: var(--error); }
+        .error-popup .popup-button:hover { background-color: #d32f2f; }
     </style>
 </head>
 <body>
@@ -398,114 +123,97 @@
         </div>
     </div>
 
+    <!-- Script using IndexedDB for large data -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const userData = localStorage.getItem('userData');
-            if (userData) {
-                window.location.href = 'bot.html';
-            }
-            
-            document.getElementById('profileImage').addEventListener('change', function(e) {
+            const dbName = 'AmuthuAI_DB';
+            let db;
+
+            const request = indexedDB.open(dbName, 1);
+            request.onerror = () => showPopup('errorPopup','Database error.');
+            request.onsuccess = (event) => {
+                db = event.target.result;
+                // Check for existing user
+                const tx = db.transaction(['users'], 'readonly');
+                const store = tx.objectStore('users');
+                const getReq = store.get('currentUser');
+                getReq.onsuccess = () => {
+                    if(getReq.result) window.location.href = 'bot.html';
+                };
+            };
+            request.onupgradeneeded = (event) => {
+                db = event.target.result;
+                if(!db.objectStoreNames.contains('users')) db.createObjectStore('users');
+            };
+
+            // Profile preview
+            document.getElementById('profileImage').addEventListener('change', function(e){
                 const file = e.target.files[0];
-                if (file) {
+                if(file){
                     const reader = new FileReader();
-                    reader.onload = function(event) {
-                        const profilePreview = document.getElementById('profilePreview');
-                        profilePreview.innerHTML = `<img src="${event.target.result}" alt="Profile">`;
+                    reader.onload = (event)=>{
+                        document.getElementById('profilePreview').innerHTML = `<img src="${event.target.result}" alt="Profile">`;
                     };
                     reader.readAsDataURL(file);
                 }
             });
-            
-            document.getElementById('registerForm').addEventListener('submit', function(e) {
+
+            document.getElementById('registerForm').addEventListener('submit', function(e){
                 e.preventDefault();
-                
                 const fullName = document.getElementById('fullName').value;
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
                 const phone = document.getElementById('phone').value;
-                const profileImage = document.getElementById('profileImage').files[0];
-                
-                if (!fullName || !email || !password) {
-                    showPopup('errorPopup', 'Please fill in all required fields.');
+                const profileFile = document.getElementById('profileImage').files[0];
+
+                if(!fullName || !email || !password){
+                    showPopup('errorPopup','Please fill in all required fields.');
                     return;
                 }
-                
-                if (password.length < 8) {
-                    showPopup('errorPopup', 'Password must be at least 8 characters long.');
+                if(password.length<8){
+                    showPopup('errorPopup','Password must be at least 8 characters.');
                     return;
                 }
-                
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) {
-                    showPopup('errorPopup', 'Please enter a valid email address.');
+                if(!emailRegex.test(email)){
+                    showPopup('errorPopup','Invalid email.');
                     return;
                 }
-                
+
                 const loader = document.getElementById('loader');
                 loader.classList.add('active');
-                
-                setTimeout(function() {
-                    let profileImageSrc = '';
-                    if (profileImage) {
-                        const reader = new FileReader();
-                        reader.onload = function(event) {
-                            profileImageSrc = event.target.result;
-                            saveUserData();
-                        };
-                        reader.readAsDataURL(profileImage);
-                    } else {
-                        saveUserData();
-                    }
-                    
-                    function saveUserData() {
-                        const userData = {
-                            fullName: fullName,
-                            email: email,
-                            password: password,
-                            phone: phone,
-                            profileImage: profileImageSrc || '',
-                            registeredAt: new Date().toISOString()
-                        };
-                        
-                        localStorage.setItem('userData', JSON.stringify(userData));
-                        
+
+                const saveData = (profileData)=>{
+                    const userData = { fullName, email, password, phone, profileImage: profileData || '', registeredAt: new Date().toISOString() };
+                    const tx = db.transaction(['users'],'readwrite');
+                    const store = tx.objectStore('users');
+                    const putReq = store.put(userData,'currentUser');
+                    putReq.onsuccess = ()=>{
                         loader.classList.remove('active');
                         showPopup('successPopup');
-                        
-                        setTimeout(function() {
-                            window.location.href = 'bot.html';
-                        }, 2000);
-                    }
-                }, 1500);
+                        setTimeout(()=>window.location.href='bot.html',2000);
+                    };
+                    putReq.onerror = ()=> { loader.classList.remove('active'); showPopup('errorPopup','Failed to save data.'); };
+                };
+
+                if(profileFile){
+                    const reader = new FileReader();
+                    reader.onload = (e)=> saveData(e.target.result);
+                    reader.readAsDataURL(profileFile);
+                } else saveData('');
             });
-        });
-        
-        function showPopup(popupId, message) {
-            const popup = document.getElementById(popupId);
-            if (message && popupId === 'errorPopup') {
-                document.getElementById('errorMessage').textContent = message;
+
+            function showPopup(id,message){
+                const popup=document.getElementById(id);
+                if(message && id==='errorPopup') document.getElementById('errorMessage').textContent=message;
+                popup.classList.add('active');
             }
-            popup.classList.add('active');
-        }
-        
-        function closePopup(popupId) {
-            document.getElementById(popupId).classList.remove('active');
-        }
-        
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            return false;
-        });
-        
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'F12' || 
-                (e.ctrlKey && e.shiftKey && e.key === 'I') || 
-                (e.ctrlKey && e.shiftKey && e.key === 'C') || 
-                (e.ctrlKey && e.key === 'u')) {
-                e.preventDefault();
-                return false;
-            }
+            function closePopup(id){document.getElementById(id).classList.remove('active');}
+
+            document.addEventListener('contextmenu',e=>e.preventDefault());
+            document.addEventListener('keydown',e=>{
+                if(e.key==='F12' || (e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='C')) || (e.ctrlKey&&e.key==='u')) e.preventDefault();
+            });
         });
     </script>
 </body>
