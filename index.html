@@ -59,6 +59,14 @@
             transition: background-color var(--transition-speed), color var(--transition-speed);
         }
 
+        .app-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
         .app-header {
             display: flex;
             justify-content: space-between;
@@ -133,7 +141,7 @@
         .chat-container {
             display: none;
             flex-direction: column;
-            height: 100%;
+            height: calc(100vh - 64px);
             flex-grow: 1;
             overflow: hidden;
         }
@@ -146,7 +154,7 @@
             transition: background-color var(--transition-speed);
             -webkit-overflow-scrolling: touch;
             overscroll-behavior: contain;
-            height: calc(100vh - 160px);
+            max-height: calc(100vh - 160px);
         }
 
         .message {
@@ -169,6 +177,7 @@
             position: relative;
             word-wrap: break-word;
             max-width: 100%;
+            line-height: 1.5;
         }
 
         .message.user .message-bubble {
@@ -182,6 +191,40 @@
             color: var(--text-primary);
             border-bottom-left-radius: 4px;
             border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .message-actions {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .copy-button {
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+        }
+
+        .copy-button .material-icons {
+            font-size: 14px;
+        }
+
+        .user .message-actions {
+            left: 5px;
+            right: auto;
         }
 
         .message-avatar {
@@ -217,40 +260,6 @@
 
         .message.bot .message-time {
             text-align: left;
-        }
-
-        .message-actions {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .message:hover .message-actions {
-            opacity: 1;
-        }
-
-        .copy-button {
-            background: rgba(0, 0, 0, 0.5);
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: white;
-        }
-
-        .copy-button .material-icons {
-            font-size: 14px;
-        }
-
-        .user .message-actions {
-            left: 5px;
-            right: auto;
         }
 
         .input-container {
@@ -337,7 +346,7 @@
 
         .scroll-to-top {
             position: fixed;
-            bottom: 100px;
+            top: 80px;
             right: 20px;
             background-color: var(--primary);
             color: white;
@@ -353,7 +362,7 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
-            z-index: 50;
+            z-index: 10;
         }
 
         .scroll-to-top.visible {
@@ -384,7 +393,7 @@
             padding: 20px;
             display: flex;
             align-items: center;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
+            border-bottom:1px solid rgba(0,0,0,0.1);
         }
 
         .menu-close {
@@ -408,7 +417,7 @@
         }
 
         .menu-section {
-            padding: 16px 0;
+            padding:16px 0;
         }
 
         .menu-item {
@@ -655,12 +664,12 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            opacity: 0;
+            opacity: 1;
             transition: opacity var(--transition-speed);
         }
 
-        .chat-history-item:hover .delete-chat {
-            opacity: 1;
+        .delete-chat:hover {
+            background-color: rgba(244, 67, 54, 0.1);
         }
 
         .delete-all-button {
@@ -698,7 +707,7 @@
 
         .typing-indicator {
             display: flex;
-            margin-bottom: 16px;
+            margin-bottom:16px;
             max-width: 80%;
         }
 
@@ -742,7 +751,7 @@
 
         .footer {
             text-align: center;
-            padding: 16px;
+            padding:16px;
             font-size: 12px;
             color: var(--text-secondary);
             background-color: var(--surface);
@@ -911,14 +920,14 @@
         }
 
         .popup.active {
-            opacity: 1;
+            opacity:1;
             visibility: visible;
         }
 
         .popup-title {
             font-size: 20px;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom:16px;
             color: var(--text-primary);
         }
 
@@ -958,6 +967,59 @@
             background-color: #d32f2f;
         }
 
+        .about-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .about-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .about-content {
+            background-color: var(--surface);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-3);
+            padding: 32px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .about-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .about-close {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+        }
+
         @media (max-width: 600px) {
             .message {
                 max-width: 90%;
@@ -980,11 +1042,11 @@
     </style>
 </head>
 <body>
-    <div id="appContainer">
-        <div id="notification"></div>
+    <div id="appContainer" class="app-container">
+        <div id="notification" class="notification"></div>
         <div id="authContainer" class="auth-container">
             <div class="auth-card">
-                <img src="https://github.com/ETDkF80mtM6dm7QToAegx7evVnsDL4Up/SWdHYCXxShrpE3yWHQEuDmvdO22xshznIzeWUCcqLeZsWrDUgZUAwLXfETE3mPjPSWdHYC/raw/refs/heads/main/unnamed.png" alt="Amuthu AI" class="logo">
+                <img src="https://raw.githubusercontent.com/ETDkF80mtM6dm7QToAegx7evVnsDL4Up/SWdHYCXxShrpE3yWHQEuDmvdO22xshznIzeWUCcqLeZsWrDUgZUAwLXfETE3mPjPSWdHYC/main/unnamed.png" alt="Amuthu AI" class="logo">
                 <h1 class="auth-title">Amuthu AI</h1>
                 <div class="auth-form" id="registerForm">
                     <div class="form-group">
@@ -1024,12 +1086,59 @@
         </div>
     </div>
 
-    <script>
-        let isInitialized = false;
+    <div class="about-modal" id="aboutModal">
+        <div class="about-content">
+            <div class="about-header">
+                <h2 class="auth-title">About Amuthu AI</h2>
+                <button class="about-close" id="aboutClose">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="about-section">
+                <h3 class="about-title">Version</h3>
+                <p>Amuthu AI v1.0</p>
+            </div>
+            <div class="about-section">
+                <h3 class="about-title">Description</h3>
+                <p>Amuthu AI is a multilingual conversational AI assistant designed to help users in English, Sinhala, and Tamil. It offers specialized models for different tasks including mathematics, coding, creative content, and casual conversations.</p>
+            </div>
+            <div class="about-section">
+                <h3 class="about-title">Features</h3>
+                <ul>
+                    <li>Multiple specialized AI models</li>
+                    <li>Multilingual support (English, Sinhala, Tamil)</li>
+                    <li>Chat history management</li>
+                    <li>Dark/Light theme toggle</li>
+                    <li>Message copying functionality</li>
+                </ul>
+            </div>
+            <div class="about-section">
+                <h3 class="about-title">Privacy</h3>
+                <p>Your conversations are stored locally on your device. We do not collect or transmit your personal data to external servers.</p>
+            </div>
+        </div>
+    </div>
 
-        document.addEventListener('DOMContentLoaded', function() {
-            if (isInitialized) return;
-            isInitialized = true;
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            if (window.hasLoaded) return;
+            window.hasLoaded = true;
+            
+            // Prevent unwanted reloads from minor errors
+            window.onerror = () => true;
+            
+            // Global notification function to avoid reference errors
+            window.showNotification = function(message, type = 'info') {
+                const notification = document.getElementById('notification');
+                if (!notification) return;
+                
+                notification.textContent = message;
+                notification.className = `notification show ${type}`;
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            };
             
             const userData = localStorage.getItem('userData');
             
@@ -1038,8 +1147,8 @@
                 return;
             }
             
-            const registerBtn = document.getElementById('regRegisterBtn');
-            registerBtn.addEventListener('click', function() {
+            // Register form
+            document.getElementById('regRegisterBtn').addEventListener('click', function() {
                 const fullName = document.getElementById('regFullName').value.trim();
                 const email = document.getElementById('regEmail').value.trim();
                 const password = document.getElementById('regPassword').value.trim();
@@ -1343,6 +1452,8 @@
                 const logoutItem = document.getElementById('logoutItem');
                 const deleteAllChatsItem = document.getElementById('deleteAllChatsItem');
                 const scrollToTop = document.getElementById('scrollToTop');
+                const aboutItem = document.getElementById('aboutItem');
+                const aboutClose = document.getElementById('aboutClose');
 
                 let currentChat = [];
                 let chatHistoryData = localStorage.getItem('title_chat') || '';
@@ -1373,6 +1484,7 @@
                     confirmPopup.classList.add('active');
                     overlay.classList.add('active');
                     
+                    // Remove existing event listeners
                     const newPopupConfirm = popupConfirm.cloneNode(true);
                     const newPopupCancel = popupCancel.cloneNode(true);
                     popupConfirm.parentNode.replaceChild(newPopupConfirm, popupConfirm);
@@ -1442,8 +1554,14 @@
                     overlay.classList.add('active');
                 });
 
-                document.getElementById('aboutItem').addEventListener('click', function() {
-                    window.location.href = 'about.html';
+                aboutItem.addEventListener('click', function() {
+                    document.getElementById('aboutModal').classList.add('active');
+                    overlay.classList.add('active');
+                });
+
+                aboutClose.addEventListener('click', function() {
+                    document.getElementById('aboutModal').classList.remove('active');
+                    overlay.classList.remove('active');
                 });
 
                 deleteAllChatsItem.addEventListener('click', function() {
@@ -1463,15 +1581,14 @@
                         'Logout',
                         'Your account is permanently deleted. Are you sure you want to continue?',
                         function() {
-                            localStorage.clear();
-                            showNotification('Your account is permanently deleted', 'success');
+                            // Instead of reloading page, just reset UI manually
+                            localStorage.removeItem('userData');
+                            showNotification('Your account has been deleted', 'success');
                             setTimeout(() => {
-                                const appContainer = document.getElementById('appContainer');
-                                appContainer.innerHTML = `
-                                    <div id="notification"></div>
+                                document.getElementById('appContainer').innerHTML = `
                                     <div id="authContainer" class="auth-container">
                                         <div class="auth-card">
-                                            <img src="https://github.com/ETDkF80mtM6dm7QToAegx7evVnsDL4Up/SWdHYCXxShrpE3yWHQEuDmvdO22xshznIzeWUCcqLeZsWrDUgZUAwLXfETE3mPjPSWdHYC/raw/refs/heads/main/unnamed.png" alt="Amuthu AI" class="logo">
+                                            <img src="https://raw.githubusercontent.com/ETDkF80mtM6dm7QToAegx7evVnsDL4Up/SWdHYCXxShrpE3yWHQEuDmvdO22xshznIzeWUCcqLeZsWrDUgZUAwLXfETE3mPjPSWdHYC/main/unnamed.png" alt="Amuthu AI" class="logo">
                                             <h1 class="auth-title">Amuthu AI</h1>
                                             <div class="auth-form" id="registerForm">
                                                 <div class="form-group">
@@ -1497,55 +1614,6 @@
                                         </div>
                                     </div>
                                 `;
-                                
-                                const registerBtn = document.getElementById('regRegisterBtn');
-                                registerBtn.addEventListener('click', function() {
-                                    const fullName = document.getElementById('regFullName').value.trim();
-                                    const email = document.getElementById('regEmail').value.trim();
-                                    const password = document.getElementById('regPassword').value.trim();
-                                    const phone = document.getElementById('regPhone').value.trim();
-                                    
-                                    if (!fullName || !email || !password) {
-                                        showNotification('Please fill in all required fields.', 'error');
-                                        return;
-                                    }
-                                    
-                                    if (password.length < 8) {
-                                        showNotification('Password must be at least 8 characters long.', 'error');
-                                        return;
-                                    }
-                                    
-                                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                                    if (!emailRegex.test(email)) {
-                                        showNotification('Please enter a valid email address.', 'error');
-                                        return;
-                                    }
-                                    
-                                    const users = JSON.parse(localStorage.getItem('users') || '[]');
-                                    if (users.find(u => u.email === email)) {
-                                        showNotification('User with this email already exists.', 'error');
-                                        return;
-                                    }
-                                    
-                                    const newUser = {
-                                        fullName: fullName,
-                                        email: email,
-                                        password: password,
-                                        phone: phone,
-                                        registeredAt: new Date().toISOString()
-                                    };
-                                    
-                                    users.push(newUser);
-                                    localStorage.setItem('users', JSON.stringify(users));
-                                    localStorage.setItem('userData', JSON.stringify(newUser));
-                                    
-                                    showNotification('Registration successful! Loading chat...', 'success');
-                                    
-                                    setTimeout(() => {
-                                        document.getElementById('authContainer').style.display = 'none';
-                                        initializeChat();
-                                    }, 1500);
-                                });
                             }, 1500);
                         }
                     );
@@ -1640,6 +1708,8 @@
 
                 function startNewChat() {
                     saveCurrentChat();
+                    
+                    // Clear current chat array completely
                     currentChat = [];
                     currentChatId = null;
                     chatTitle.textContent = 'New Chat';
@@ -1649,6 +1719,7 @@
                     sideMenu.classList.remove('open');
                     overlay.classList.remove('active');
                     
+                    // CRITICAL FIX: Clear chat messages container
                     chatMessages.innerHTML = '';
                 }
 
@@ -1758,8 +1829,30 @@
 
                 function formatResponse(text) {
                     let formattedText = text;
+                    
+                    // Convert markdown bold (**text**) to HTML bold (<b>text</b>)
+                    formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+                    
+                    // Convert markdown italic (*text*) to HTML italic (<i>text</i>)
+                    formattedText = formattedText.replace(/\*(.*?)\*/g, '<i>$1</i>');
+                    
+                    // Replace double newlines with paragraph breaks
+                    formattedText = formattedText.replace(/\n\n/g, '</p><p>');
+                    
+                    // Add paragraph tags at the beginning and end
+                    if (!formattedText.startsWith('<p>')) {
+                        formattedText = '<p>' + formattedText;
+                    }
+                    if (!formattedText.endsWith('</p>')) {
+                        formattedText = formattedText + '</p>';
+                    }
+                    
+                    // Format numbered lists in a cleaner way
                     formattedText = formattedText.replace(/(\d+\.\s*)([^:]+)(:)/g, '$1$2$3 ');
+                    
+                    // Replace patterns like "1**Item**:detail2.**Item**" with "1. Item: [details] 2. Item: [details]"
                     formattedText = formattedText.replace(/(\d+\.\s*)([^*]+)(\*\*)([^*]+)(\*\*)/g, '$1$2: $3');
+                    
                     return formattedText;
                 }
 
@@ -2032,6 +2125,7 @@
                     chatContainer.style.display = 'flex';
                     quickActions.style.display = 'none';
                     
+                    // CRITICAL FIX: Clear previous messages before loading new chat
                     chatMessages.innerHTML = '';
                     
                     currentChat.forEach(msg => {
@@ -2097,16 +2191,6 @@
                     };
                     
                     return text.replace(/[&<>"']/g, m => map[m]);
-                }
-
-                function showNotification(message, type = 'info') {
-                    const notification = document.getElementById('notification');
-                    notification.textContent = message;
-                    notification.className = `notification show ${type}`;
-                    
-                    setTimeout(() => {
-                        notification.classList.remove('show');
-                    }, 3000);
                 }
             }
         });
