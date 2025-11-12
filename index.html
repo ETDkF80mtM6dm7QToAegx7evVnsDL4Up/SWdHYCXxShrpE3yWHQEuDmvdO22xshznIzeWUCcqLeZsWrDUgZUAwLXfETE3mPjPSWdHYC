@@ -1,220 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Amuthu AI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #1976d2;
-            --primary-light: #e3f2fd;
-            --primary-dark: #0d47a1;
-            --secondary: #03a9f4;
-            --background: #ffffff;
-            --surface: #f5f5f5;
-            --error: #f44336;
-            --text-primary: #212121;
-            --text-secondary: #757575;
-            --shadow-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            --shadow-2: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-            --shadow-3: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-            --border-radius: 16px;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--background); color: var(--text-primary); height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; position: relative; user-select: none; }
-        .container { width: 100%; max-width: 400px; padding: 24px; display: flex; flex-direction: column; align-items: center; }
-        .card { background-color: var(--background); border-radius: var(--border-radius); box-shadow: var(--shadow-3); padding: 32px; width: 100%; display: flex; flex-direction: column; align-items: center; }
-        .logo { width: 120px; height: 120px; margin-bottom: 24px; border-radius: 50%; object-fit: cover; }
-        .title { font-size: 24px; font-weight: 600; margin-bottom: 8px; color: var(--primary-dark); }
-        .subtitle { font-size: 16px; font-weight: 400; color: var(--text-secondary); margin-bottom: 32px; text-align: center; }
-        .form-group { width: 100%; margin-bottom: 16px; }
-        .form-field { position: relative; margin-bottom: 16px; }
-        .form-input { width: 100%; padding: 16px 12px 8px 12px; border: none; border-bottom: 1px solid var(--text-secondary); background-color: transparent; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 400; color: var(--text-primary); outline: none; transition: border-color 0.3s; }
-        .form-input:focus { border-bottom-color: var(--primary); }
-        .form-label { position: absolute; left: 12px; top: 16px; font-size: 16px; font-weight: 400; color: var(--text-secondary); pointer-events: none; transition: all 0.3s; }
-        .form-input:focus ~ .form-label, .form-input:not(:placeholder-shown) ~ .form-label { top: 4px; font-size: 12px; color: var(--primary); }
-        .profile-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; width: 100%; }
-        .profile-preview { width: 100px; height: 100px; border-radius: 50%; background-color: var(--surface); margin-bottom: 16px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        .profile-preview img { width: 100%; height: 100%; object-fit: cover; }
-        .profile-preview .material-icons { font-size: 48px; color: var(--text-secondary); }
-        .file-input { display: none; }
-        .file-button { background-color: var(--primary); color: white; border: none; border-radius: 24px; padding: 10px 24px; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px; cursor: pointer; transition: background-color 0.3s, box-shadow 0.3s; box-shadow: var(--shadow-1); }
-        .file-button:hover { background-color: var(--primary-dark); box-shadow: var(--shadow-2); }
-        .register-button { width: 100%; background-color: var(--primary); color: white; border: none; border-radius: 24px; padding: 14px; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 16px; cursor: pointer; transition: background-color 0.3s, box-shadow 0.3s; margin-top: 8px; box-shadow: var(--shadow-1); }
-        .register-button:hover { background-color: var(--primary-dark); box-shadow: var(--shadow-2); }
-        .footer { position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; font-size: 12px; color: var(--text-secondary); font-family: 'Inter', sans-serif; font-weight: 300; }
-        .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: opacity 0.3s, visibility 0.3s; }
-        .loader.active { visibility: visible; opacity: 1; }
-        .loader-spinner { width: 50px; height: 50px; border: 4px solid var(--primary-light); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 1001; visibility: hidden; opacity: 0; transition: opacity 0.3s, visibility 0.3s; }
-        .popup.active { visibility: visible; opacity: 1; }
-        .popup-content { background-color: var(--background); border-radius: var(--border-radius); padding: 24px; width: 90%; max-width: 400px; box-shadow: var(--shadow-3); transform: translateY(20px); transition: transform 0.3s; }
-        .popup.active .popup-content { transform: translateY(0); }
-        .popup-title { font-size: 20px; font-weight: 600; margin-bottom: 16px; color: var(--text-primary); }
-        .popup-message { font-size: 16px; font-weight: 400; margin-bottom: 24px; color: var(--text-secondary); }
-        .popup-button { background-color: var(--primary); color: white; border: none; border-radius: 24px; padding: 10px 24px; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px; cursor: pointer; transition: background-color 0.3s; float: right; }
-        .popup-button:hover { background-color: var(--primary-dark); }
-        .error-popup .popup-title { color: var(--error); }
-        .error-popup .popup-button { background-color: var(--error); }
-        .error-popup .popup-button:hover { background-color: #d32f2f; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register - Amuthu AI</title>
+<style>
+    body { font-family: 'Inter', sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; background:#f5f5f5; }
+    .card { background:#fff; padding:32px; border-radius:16px; box-shadow:0 3px 10px rgba(0,0,0,0.2); width:100%; max-width:400px; }
+    h1 { margin-bottom:16px; font-size:24px; color:#1976d2; text-align:center; }
+    .form-field { margin-bottom:16px; display:flex; flex-direction:column; }
+    input { padding:12px; font-size:16px; border:1px solid #ccc; border-radius:8px; }
+    button { width:100%; padding:14px; background:#1976d2; color:#fff; border:none; border-radius:24px; font-size:16px; cursor:pointer; }
+    button:hover { background:#0d47a1; }
+    .error { color:#f44336; font-size:14px; margin-bottom:8px; text-align:center; }
+    .success { color:#4caf50; font-size:14px; margin-bottom:8px; text-align:center; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <img src="https://raw.githubusercontent.com/ETDkF80mtM6dm7QToAegx7evVnsDL4Up/SWdHYCXxShrpE3yWHQEuDmvdO22xshznIzeWUCcqLeZsWrDUgZUAwLXfETE3mPjPSWdHYC/refs/heads/main/unnamed.png" alt="Amuthu AI" class="logo">
-            <h1 class="title">Create Account</h1>
-            <p class="subtitle">The AI Made For YOU</p>
-            
-            <div class="profile-section">
-                <div class="profile-preview" id="profilePreview">
-                    <i class="material-icons">person</i>
-                </div>
-                <input type="file" id="profileImage" class="file-input" accept="image/*">
-                <button class="file-button" onclick="document.getElementById('profileImage').click()">Choose a profile picture</button>
-            </div>
-            
-            <form id="registerForm">
-                <div class="form-group">
-                    <div class="form-field">
-                        <input type="text" id="fullName" class="form-input" placeholder=" " required>
-                        <label for="fullName" class="form-label">Full Name</label>
-                    </div>
-                    <div class="form-field">
-                        <input type="email" id="email" class="form-input" placeholder=" " required>
-                        <label for="email" class="form-label">Email</label>
-                    </div>
-                    <div class="form-field">
-                        <input type="password" id="password" class="form-input" placeholder=" " required>
-                        <label for="password" class="form-label">Password</label>
-                    </div>
-                    <div class="form-field">
-                        <input type="tel" id="phone" class="form-input" placeholder=" ">
-                        <label for="phone" class="form-label">Phone (Optional)</label>
-                    </div>
-                </div>
-                <button type="submit" class="register-button">Register</button>
-            </form>
-        </div>
+
+<div class="card">
+    <h1>Create Account</h1>
+    <div class="error" id="errorMessage"></div>
+    <div class="success" id="successMessage"></div>
+    <div class="form-field">
+        <input type="text" id="fullName" placeholder="Full Name" required>
     </div>
-    
-    <div class="footer">Made by ninsara.dev | Amuthu AI</div>
-    
-    <div class="loader" id="loader">
-        <div class="loader-spinner"></div>
+    <div class="form-field">
+        <input type="email" id="email" placeholder="Email" required>
     </div>
-    
-    <div class="popup" id="successPopup">
-        <div class="popup-content">
-            <h2 class="popup-title">Registration Successful!</h2>
-            <p class="popup-message">Your account has been created successfully. Redirecting to bot...</p>
-            <button class="popup-button" onclick="closePopup('successPopup')">OK</button>
-        </div>
+    <div class="form-field">
+        <input type="password" id="password" placeholder="Password" required>
     </div>
-    
-    <div class="popup error-popup" id="errorPopup">
-        <div class="popup-content">
-            <h2 class="popup-title">Registration Failed</h2>
-            <p class="popup-message" id="errorMessage">Please check your information and try again.</p>
-            <button class="popup-button" onclick="closePopup('errorPopup')">OK</button>
-        </div>
+    <div class="form-field">
+        <input type="tel" id="phone" placeholder="Phone (Optional)">
     </div>
+    <button id="registerBtn">Register</button>
+</div>
 
-    <!-- Script using IndexedDB for large data -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const dbName = 'AmuthuAI_DB';
-            let db;
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('userData')) {
+        window.location.href = 'bot.html';
+    }
 
-            const request = indexedDB.open(dbName, 1);
-            request.onerror = () => showPopup('errorPopup','Database error.');
-            request.onsuccess = (event) => {
-                db = event.target.result;
-                // Check for existing user
-                const tx = db.transaction(['users'], 'readonly');
-                const store = tx.objectStore('users');
-                const getReq = store.get('currentUser');
-                getReq.onsuccess = () => {
-                    if(getReq.result) window.location.href = 'bot.html';
-                };
-            };
-            request.onupgradeneeded = (event) => {
-                db = event.target.result;
-                if(!db.objectStoreNames.contains('users')) db.createObjectStore('users');
-            };
+    document.getElementById('registerBtn').addEventListener('click', function() {
+        const fullName = document.getElementById('fullName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const phone = document.getElementById('phone').value.trim();
 
-            // Profile preview
-            document.getElementById('profileImage').addEventListener('change', function(e){
-                const file = e.target.files[0];
-                if(file){
-                    const reader = new FileReader();
-                    reader.onload = (event)=>{
-                        document.getElementById('profilePreview').innerHTML = `<img src="${event.target.result}" alt="Profile">`;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
+        const errorEl = document.getElementById('errorMessage');
+        const successEl = document.getElementById('successMessage');
+        errorEl.textContent = '';
+        successEl.textContent = '';
 
-            document.getElementById('registerForm').addEventListener('submit', function(e){
-                e.preventDefault();
-                const fullName = document.getElementById('fullName').value;
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                const phone = document.getElementById('phone').value;
-                const profileFile = document.getElementById('profileImage').files[0];
+        // Basic validation
+        if (!fullName || !email || !password) {
+            errorEl.textContent = 'Please fill in all required fields.';
+            return;
+        }
 
-                if(!fullName || !email || !password){
-                    showPopup('errorPopup','Please fill in all required fields.');
-                    return;
-                }
-                if(password.length<8){
-                    showPopup('errorPopup','Password must be at least 8 characters.');
-                    return;
-                }
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if(!emailRegex.test(email)){
-                    showPopup('errorPopup','Invalid email.');
-                    return;
-                }
+        if (password.length < 8) {
+            errorEl.textContent = 'Password must be at least 8 characters long.';
+            return;
+        }
 
-                const loader = document.getElementById('loader');
-                loader.classList.add('active');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            errorEl.textContent = 'Please enter a valid email address.';
+            return;
+        }
 
-                const saveData = (profileData)=>{
-                    const userData = { fullName, email, password, phone, profileImage: profileData || '', registeredAt: new Date().toISOString() };
-                    const tx = db.transaction(['users'],'readwrite');
-                    const store = tx.objectStore('users');
-                    const putReq = store.put(userData,'currentUser');
-                    putReq.onsuccess = ()=>{
-                        loader.classList.remove('active');
-                        showPopup('successPopup');
-                        setTimeout(()=>window.location.href='bot.html',2000);
-                    };
-                    putReq.onerror = ()=> { loader.classList.remove('active'); showPopup('errorPopup','Failed to save data.'); };
-                };
+        const userData = {
+            fullName: fullName,
+            email: email,
+            password: password,
+            phone: phone,
+            registeredAt: new Date().toISOString()
+        };
 
-                if(profileFile){
-                    const reader = new FileReader();
-                    reader.onload = (e)=> saveData(e.target.result);
-                    reader.readAsDataURL(profileFile);
-                } else saveData('');
-            });
+        localStorage.setItem('userData', JSON.stringify(userData));
 
-            function showPopup(id,message){
-                const popup=document.getElementById(id);
-                if(message && id==='errorPopup') document.getElementById('errorMessage').textContent=message;
-                popup.classList.add('active');
-            }
-            function closePopup(id){document.getElementById(id).classList.remove('active');}
+        successEl.textContent = 'Registration successful! Redirecting...';
 
-            document.addEventListener('contextmenu',e=>e.preventDefault());
-            document.addEventListener('keydown',e=>{
-                if(e.key==='F12' || (e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='C')) || (e.ctrlKey&&e.key==='u')) e.preventDefault();
-            });
-        });
-    </script>
+        setTimeout(function() {
+            window.location.href = 'bot.html';
+        }, 2000);
+    });
+});
+</script>
+
 </body>
 </html>
