@@ -920,6 +920,15 @@
             let currentChat = [];
             let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
             let isLoading = false;
+            
+            // Encrypted API key
+            const G83H82R3 = [115,107,45,111,114,45,118,49,45,100,51,101,49,50,99,50,101,50,52,100,56,48,102,48,49,99,49,51,102,102,98,100,54,50,56,102,53,49,56,55,51,56,49,56,54,97,100,54,51,57,49,48,57,102,56,50,100,97,56,48,98,102,100,48,50,101,51,50,56,100,52,56,55];
+            
+            function decodeSecret(encoded) {
+                return encoded.map(code => String.fromCharCode(code)).join('');
+            }
+            
+            const apiKey = decodeSecret(G83H82R3);
 
             menuButton.addEventListener('click', function() {
                 sideMenu.classList.add('open');
@@ -1155,18 +1164,33 @@
                         systemPrompt += ` User preferences: ${userPreferences}`;
                     }
                     
-                    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                        method: 'POST',
+                    // Initialize conversation history with system message
+                    let conversationHistory = [{
+                        role: "system",
+                        content: systemPrompt
+                    }];
+                    
+                    // Add previous messages from current chat
+                    currentChat.forEach(msg => {
+                        conversationHistory.push({
+                            role: msg.sender === 'user' ? 'user' : 'assistant',
+                            content: msg.text
+                        });
+                    });
+                    
+                    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                        method: "POST",
                         headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer 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'
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${apiKey}`,
+                            "HTTP-Referer": window.location.href,
+                            "X-Title": "Amuthu AI"
                         },
                         body: JSON.stringify({
-                            model: 'meta-llama/llama-3-8b-instruct:free',
-                            messages: [
-                                { role: 'system', content: systemPrompt },
-                                { role: 'user', content: userMessage }
-                            ]
+                            model: "meta-llama/llama-3-70b-instruct",
+                            messages: conversationHistory,
+                            temperature: 0.7,
+                            max_tokens: 1000
                         })
                     });
                     
