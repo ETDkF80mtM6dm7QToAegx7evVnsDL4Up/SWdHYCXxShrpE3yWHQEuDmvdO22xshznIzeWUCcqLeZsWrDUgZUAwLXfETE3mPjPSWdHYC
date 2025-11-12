@@ -227,31 +227,6 @@
             z-index: 10;
         }
 
-        .quick-actions {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 16px;
-            width: 100%;
-        }
-
-        .quick-action-button {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: var(--shadow-2);
-        }
-
-        .quick-action-button .material-icons {
-            font-size: 28px;
-        }
-
         .input-pill {
             display: flex;
             align-items: center;
@@ -754,6 +729,46 @@
             font-weight: 500;
         }
 
+        .logo {
+            width: 120px;
+            height: 60px;
+            margin-bottom: 20px;
+        }
+
+        .register-form {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-3);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
+
+        .notification.error {
+            background-color: var(--error);
+        }
+
+        .notification.success {
+            background-color: #4caf50;
+        }
+
         @media (max-width: 600px) {
             .message {
                 max-width: 90%;
@@ -795,17 +810,6 @@
     </div>
 
     <div class="input-container" id="inputContainer">
-        <div class="quick-actions" id="quickActions">
-            <div class="quick-action-button" id="imageButton">
-                <span class="material-icons">image</span>
-            </div>
-            <div class="quick-action-button" id="searchButton">
-                <span class="material-icons">search</span>
-            </div>
-            <div class="quick-action-button" id="textButton">
-                <span class="material-icons">text_fields</span>
-            </div>
-        </div>
         <div class="input-pill">
             <input type="text" class="input-field" id="messageInput" placeholder="Type a message...">
             <button class="send-button" id="sendButton">
@@ -981,6 +985,8 @@
         </div>
     </div>
 
+    <div class="notification" id="notification"></div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const userData = localStorage.getItem('userData');
@@ -1008,19 +1014,6 @@
             const colorIndex = initial.charCodeAt(0) % colors.length;
             document.getElementById('userProfile').style.backgroundColor = colors[colorIndex];
 
-            // Set profile popup info
-            document.getElementById('profileName').textContent = user.fullName;
-            document.getElementById('profileEmail').textContent = user.email;
-            document.getElementById('profileCircle').textContent = initial;
-            document.getElementById('profileCircle').style.backgroundColor = colors[colorIndex];
-
-            const hasPreid = localStorage.getItem('preid');
-            const quickActions = document.getElementById('quickActions');
-            
-            if (!hasPreid) {
-                quickActions.style.display = 'none';
-            }
-
             const theme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', theme);
             document.querySelector(`.theme-option[data-theme="${theme}"]`).classList.add('active');
@@ -1037,6 +1030,12 @@
 
             const userPreferences = localStorage.getItem('userPreferences') || '';
             document.getElementById('userPreferences').value = userPreferences;
+
+            // Set profile popup info
+            document.getElementById('profileName').textContent = user.fullName;
+            document.getElementById('profileEmail').textContent = user.email;
+            document.getElementById('profileCircle').textContent = initial;
+            document.getElementById('profileCircle').style.backgroundColor = colors[colorIndex];
 
             const menuButton = document.getElementById('menuButton');
             const menuClose = document.getElementById('menuClose');
@@ -1156,24 +1155,12 @@
                 document.getElementById('settingsModal').classList.remove('active');
                 overlay.classList.remove('active');
                 
-                showNotification('Settings saved successfully!');
+                showNotification('Settings saved successfully!', 'success');
             });
 
             userProfile.addEventListener('click', function() {
                 document.getElementById('userProfileModal').classList.add('active');
                 overlay.classList.add('active');
-            });
-
-            imageButton.addEventListener('click', function() {
-                window.location.href = 'image.html';
-            });
-
-            searchButton.addEventListener('click', function() {
-                window.location.href = 'find.html';
-            });
-
-            textButton.addEventListener('click', function() {
-                window.location.href = 'text.html';
             });
 
             messageInput.addEventListener('focus', function() {
@@ -1199,7 +1186,7 @@
             sendButton.addEventListener('click', sendMessage);
 
             function adjustInputContainer() {
-                // Adjust the input container when keyboard is visible
+                // Adjust input container when keyboard is visible
                 const inputContainer = document.getElementById('inputContainer');
                 const viewportHeight = window.innerHeight;
                 const inputHeight = inputContainer.offsetHeight;
@@ -1212,82 +1199,6 @@
                 }
             }
 
-            function showRegisterModal() {
-                const registerModal = document.createElement('div');
-                registerModal.className = 'modal active';
-                registerModal.id = 'registerModal';
-                registerModal.innerHTML = `
-                    <div class="modal-header">
-                        <div class="modal-title">Register</div>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label class="form-label" for="fullName">Full Name</label>
-                            <input type="text" class="form-input" id="regFullName" placeholder="Enter your full name">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="email">Email</label>
-                            <input type="email" class="form-input" id="regEmail" placeholder="Enter your email">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="password">Password</label>
-                            <input type="password" class="form-input" id="regPassword" placeholder="Enter your password">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="phone">Phone (Optional)</label>
-                            <input type="tel" class="form-input" id="regPhone" placeholder="Enter your phone number">
-                        </div>
-                        <button class="send-button" id="regRegisterBtn" style="width: 100%; border-radius: 8px; margin-top: 10px;">
-                            <span class="material-icons">person_add</span>
-                        </button>
-                    </div>
-                `;
-                
-                document.body.appendChild(registerModal);
-                overlay.classList.add('active');
-                
-                document.getElementById('regRegisterBtn').addEventListener('click', function() {
-                    const fullName = document.getElementById('regFullName').value.trim();
-                    const email = document.getElementById('regEmail').value.trim();
-                    const password = document.getElementById('regPassword').value.trim();
-                    const phone = document.getElementById('regPhone').value.trim();
-                    
-                    if (!fullName || !email || !password) {
-                        showNotification('Please fill in all required fields.');
-                        return;
-                    }
-                    
-                    if (password.length < 8) {
-                        showNotification('Password must be at least 8 characters long.');
-                        return;
-                    }
-                    
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(email)) {
-                        showNotification('Please enter a valid email address.');
-                        return;
-                    }
-                    
-                    const userData = {
-                        fullName: fullName,
-                        email: email,
-                        password: password,
-                        phone: phone,
-                        registeredAt: new Date().toISOString()
-                    };
-                    
-                    localStorage.setItem('userData', JSON.stringify(userData));
-                    
-                    showNotification('Registration successful! Loading chat...');
-                    
-                    setTimeout(() => {
-                        document.getElementById('registerModal').remove();
-                        overlay.classList.remove('active');
-                        location.reload();
-                    }, 1500);
-                });
-            }
-
             function startNewChat() {
                 saveCurrentChat();
                 currentChat = [];
@@ -1295,7 +1206,6 @@
                 chatTitle.textContent = 'New Chat';
                 welcomeContainer.style.display = 'flex';
                 chatContainer.style.display = 'none';
-                quickActions.style.display = hasPreid ? 'flex' : 'none';
                 sideMenu.classList.remove('open');
                 overlay.classList.remove('active');
             }
@@ -1305,7 +1215,6 @@
                 if (!message || isLoading) return;
 
                 if (currentChat.length === 0) {
-                    quickActions.style.display = 'none';
                     welcomeContainer.style.display = 'none';
                     chatContainer.style.display = 'flex';
                     
@@ -1430,19 +1339,19 @@
                     let systemPrompt = '';
                     switch (selectedModel) {
                         case 'meetare':
-                            systemPrompt = `You are Amuthu Meetare, a specialized AI assistant for mathematical and coding tasks. Provide accurate, detailed answers to math problems and coding questions. You can communicate in English, Sinhala, and Tamil. Use simple, everyday language that is easy to understand. Do not discuss your own capabilities or the model itself. Focus only on providing helpful information about math and coding. The system was created by Aveesha Ninsara Pelawaththa.`;
+                            systemPrompt = `You are Amuthu Meetare, a specialized AI assistant for mathematical and coding tasks. Provide accurate, detailed answers to math problems and coding questions. You can communicate in English, Sinhala, and Tamil. Use simple, everyday language that is easy to understand. Do not discuss your own capabilities or model itself. Focus only on providing helpful information about math and coding. The system was created by Aveesha Ninsara Pelawaththa.`;
                             break;
                         case 'multi':
-                            systemPrompt = `You are Amuthu Multi, a versatile AI assistant for everyday tasks. You can communicate fluently in English, Sinhala, and Tamil using simple, everyday language. Be helpful, friendly, and conversational. Do not discuss your own capabilities or the model itself. Focus only on providing helpful information. The system was created by Aveesha Ninsara Pelawaththa.`;
+                            systemPrompt = `You are Amuthu Multi, a versatile AI assistant for everyday tasks. You can communicate fluently in English, Sinhala, and Tamil using simple, everyday language. Be helpful, friendly, and conversational. Do not discuss your own capabilities or model itself. Focus only on providing helpful information. The system was created by Aveesha Ninsara Pelawaththa.`;
                             break;
                         case 'picasso':
-                            systemPrompt = `You are Amuthu Picasso, a creative AI assistant specialized in songs, poetry, and artistic content. You can communicate in English, Sinhala, and Tamil using simple, everyday language. Be creative, expressive, and inspiring. Do not discuss your own capabilities or the model itself. Focus only on providing helpful information about creative content. The system was created by Aveesha Ninsara Pelawaththa.`;
+                            systemPrompt = `You are Amuthu Picasso, a creative AI assistant specialized in songs, poetry, and artistic content. You can communicate in English, Sinhala, and Tamil using simple, everyday language. Be creative, expressive, and inspiring. Do not discuss your own capabilities or model itself. Focus only on providing helpful information about creative content. The system was created by Aveesha Ninsara Pelawaththa.`;
                             break;
                         case 'bro':
-                            systemPrompt = `You are Amuthu Bro, a friendly AI assistant for casual chatting. Use Sinhala slang words like අම්මටසිරි, බොක්ක, හලෝ මචං, කොහොමද, සුපිරි in your responses. Be friendly, casual, and conversational. Do not discuss your own capabilities or the model itself. Focus only on providing helpful information. The system was created by Aveesha Ninsara Pelawaththa.`;
+                            systemPrompt = `You are Amuthu Bro, a friendly AI assistant for casual chatting. Use Sinhala slang words like අම්මටසිරි, බොක්ක, හලෝ මචං, කොහොමද, සුපිරි in your responses. Be friendly, casual, and conversational. Do not discuss your own capabilities or model itself. Focus only on providing helpful information. The system was created by Aveesha Ninsara Pelawaththa.`;
                             break;
                         default:
-                            systemPrompt = `You are Amuthu AI, a helpful assistant. You can communicate in English, Sinhala, and Tamil using simple, everyday language. Do not discuss your own capabilities or the model itself. Focus only on providing helpful information. The system was created by Aveesha Ninsara Pelawaththa.`;
+                            systemPrompt = `You are Amuthu AI, a helpful assistant. You can communicate in English, Sinhala, and Tamil using simple, everyday language. Do not discuss your own capabilities or model itself. Focus only on providing helpful information. The system was created by Aveesha Ninsara Pelawaththa.`;
                     }
                     
                     if (user.fullName) {
@@ -1669,7 +1578,6 @@
                 
                 welcomeContainer.style.display = 'none';
                 chatContainer.style.display = 'flex';
-                quickActions.style.display = 'none';
                 
                 chatMessages.innerHTML = '';
                 
@@ -1718,34 +1626,94 @@
                 return text.replace(/[&<>"']/g, m => map[m]);
             }
 
-            function showNotification(message) {
-                const notification = document.createElement('div');
-                notification.style.position = 'fixed';
-                notification.style.bottom = '20px';
-                notification.style.left = '50%';
-                notification.style.transform = 'translateX(-50%)';
-                notification.style.backgroundColor = 'var(--primary)';
-                notification.style.color = 'white';
-                notification.style.padding = '12px 24px';
-                notification.style.borderRadius = '24px';
-                notification.style.boxShadow = 'var(--shadow-2)';
-                notification.style.zIndex = '1000';
-                notification.style.opacity = '0';
-                notification.style.transition = 'opacity 0.3s';
+            function showNotification(message, type = 'info') {
+                const notification = document.getElementById('notification');
                 notification.textContent = message;
-                
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.style.opacity = '1';
-                }, 10);
+                notification.className = `notification ${type}`;
+                notification.classList.add('show');
                 
                 setTimeout(() => {
-                    notification.style.opacity = '0';
-                    setTimeout(() => {
-                        document.body.removeChild(notification);
-                    }, 300);
+                    notification.classList.remove('show');
                 }, 3000);
+            }
+
+            function showRegisterModal() {
+                const registerModal = document.createElement('div');
+                registerModal.className = 'modal active';
+                registerModal.id = 'registerModal';
+                registerModal.innerHTML = `
+                    <div class="modal-header">
+                        <div class="modal-title">Register</div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="user-profile-popup">
+                            <img src="https://picsum.photos/seed/amuthuai/120/60.jpg" alt="Amuthu AI" class="logo">
+                            <div class="register-form">
+                                <div class="form-group">
+                                    <label class="form-label" for="fullName">Full Name</label>
+                                    <input type="text" class="form-input" id="regFullName" placeholder="Enter your full name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="email">Email</label>
+                                    <input type="email" class="form-input" id="regEmail" placeholder="Enter your email">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="password">Password</label>
+                                    <input type="password" class="form-input" id="regPassword" placeholder="Enter your password">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="phone">Phone (Optional)</label>
+                                    <input type="tel" class="form-input" id="regPhone" placeholder="Enter your phone number">
+                                </div>
+                                <button class="send-button" id="regRegisterBtn" style="width: 100%; border-radius: 8px; margin-top: 10px;">
+                                    <span class="material-icons">person_add</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(registerModal);
+                
+                document.getElementById('regRegisterBtn').addEventListener('click', function() {
+                    const fullName = document.getElementById('regFullName').value.trim();
+                    const email = document.getElementById('regEmail').value.trim();
+                    const password = document.getElementById('regPassword').value.trim();
+                    const phone = document.getElementById('regPhone').value.trim();
+                    
+                    if (!fullName || !email || !password) {
+                        showNotification('Please fill in all required fields.', 'error');
+                        return;
+                    }
+                    
+                    if (password.length < 8) {
+                        showNotification('Password must be at least 8 characters long.', 'error');
+                        return;
+                    }
+                    
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        showNotification('Please enter a valid email address.', 'error');
+                        return;
+                    }
+                    
+                    const userData = {
+                        fullName: fullName,
+                        email: email,
+                        password: password,
+                        phone: phone,
+                        registeredAt: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    
+                    showNotification('Registration successful! Loading chat...', 'success');
+                    
+                    setTimeout(() => {
+                        registerModal.remove();
+                        location.reload();
+                    }, 1500);
+                });
             }
 
             window.addEventListener('beforeunload', function() {
