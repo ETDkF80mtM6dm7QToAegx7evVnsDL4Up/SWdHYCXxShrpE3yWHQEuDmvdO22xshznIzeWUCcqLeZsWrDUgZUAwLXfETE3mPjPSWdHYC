@@ -81,11 +81,6 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            transition: background-color var(--transition-speed);
-        }
-
-        .menu-button:hover {
-            background-color: var(--primary-light);
         }
 
         .chat-title {
@@ -107,11 +102,6 @@
             overflow: hidden;
             cursor: pointer;
             border: 2px solid var(--primary);
-            transition: transform var(--transition-speed);
-        }
-
-        .user-profile:hover {
-            transform: scale(1.05);
         }
 
         .user-profile img {
@@ -178,14 +168,14 @@
         .message-bubble {
             padding: 12px 16px;
             border-radius: var(--message-radius);
-            box-shadow: var(--shadow-1);
+            box-shadow: var(--shadow-2);
             position: relative;
             word-wrap: break-word;
             max-width: 100%;
         }
 
         .message.user .message-bubble {
-            background-color: var(--user-bubble);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             border-bottom-right-radius: 4px;
         }
@@ -194,11 +184,12 @@
             background-color: var(--bot-bubble);
             color: var(--text-primary);
             border-bottom-left-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.1);
         }
 
         .message-avatar {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             margin: 0 8px;
             display: flex;
@@ -206,10 +197,18 @@
             justify-content: center;
             color: white;
             background-color: var(--primary);
+            flex-shrink: 0;
         }
 
         .message.user .message-avatar {
             background-color: var(--primary-dark);
+            overflow: hidden;
+        }
+
+        .message.user .message-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .message-time {
@@ -252,17 +251,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background-color var(--transition-speed), transform 0.2s;
             box-shadow: var(--shadow-2);
-        }
-
-        .quick-action-button:hover {
-            background-color: var(--primary-dark);
-            transform: scale(1.05);
-        }
-
-        .quick-action-button:active {
-            transform: scale(0.95);
         }
 
         .quick-action-button .material-icons {
@@ -307,15 +296,10 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background-color var(--transition-speed), transform 0.2s;
         }
 
-        .send-button:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .send-button:active {
-            transform: scale(0.95);
+        .send-button .material-icons {
+            font-size: 20px;
         }
 
         .input-hint {
@@ -377,11 +361,6 @@
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            transition: background-color var(--transition-speed);
-        }
-
-        .menu-close:hover {
-            background-color: var(--primary-light);
         }
 
         .menu-title {
@@ -399,12 +378,7 @@
             align-items: center;
             padding: 12px 20px;
             cursor: pointer;
-            transition: background-color var(--transition-speed);
             color: var(--text-primary);
-        }
-
-        .menu-item:hover {
-            background-color: var(--primary-light);
         }
 
         .menu-item .material-icons {
@@ -485,11 +459,6 @@
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            transition: background-color var(--transition-speed);
-        }
-
-        .modal-close:hover {
-            background-color: var(--primary-light);
         }
 
         .modal-body {
@@ -514,10 +483,6 @@
         .theme-option.active {
             border-color: var(--primary);
             background-color: var(--primary-light);
-        }
-
-        .theme-option:hover:not(.active) {
-            background-color: var(--surface);
         }
 
         .theme-option .material-icons {
@@ -573,10 +538,6 @@
         .model-option.active {
             border-color: var(--primary);
             background-color: var(--primary-light);
-        }
-
-        .model-option:hover:not(.active) {
-            background-color: var(--surface);
         }
 
         .model-info {
@@ -671,6 +632,7 @@
             box-shadow: var(--shadow-1);
             display: flex;
             align-items: center;
+            border: 1px solid rgba(0,0,0,0.1);
         }
 
         .typing-dot {
@@ -820,11 +782,7 @@
             </div>
             <div class="form-group">
                 <label class="form-label" for="userPreferences">User Preferences</label>
-                <textarea class="form-textarea" id="userPreferences" placeholder="Tell us about yourself and how you want the AI to respond..."></textarea>
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="userName">Your Name</label>
-                <input type="text" class="form-input" id="userName" placeholder="What should I call you?">
+                <textarea class="form-textarea" id="userPreferences" placeholder="Tell us about yourself and how you want AI to respond..."></textarea>
             </div>
             <button class="send-button" id="saveSettings" style="width: 100%; border-radius: 8px;">
                 <span class="material-icons">save</span>
@@ -842,21 +800,21 @@
         <div class="modal-body">
             <div class="model-option" data-model="meetare">
                 <div class="model-info">
-                    <div class="model-name">Amuthu Meetare</div>
+                    <div class="model-name">අමුතු මීටරේ - Amuthu Meetare</div>
                     <div class="model-description">Specialized for mathematical and coding tasks</div>
                 </div>
                 <span class="material-icons model-check">check_circle</span>
             </div>
-            <div class="model-option" data-model="multi">
+            <div class="model-option active" data-model="multi">
                 <div class="model-info">
-                    <div class="model-name">Amuthu Multi</div>
+                    <div class="model-name">අමුතු මල්ටි - Amuthu Multi</div>
                     <div class="model-description">Versatile model for everyday tasks and multilingual conversations</div>
                 </div>
                 <span class="material-icons model-check">check_circle</span>
             </div>
             <div class="model-option" data-model="picasso">
                 <div class="model-info">
-                    <div class="model-name">Amuthu Picasso</div>
+                    <div class="model-name">අමුතු පිකාසෝ - Amuthu Picasso</div>
                     <div class="model-description">Creative model for songs, poetry and artistic content</div>
                 </div>
                 <span class="material-icons model-check">check_circle</span>
@@ -919,7 +877,6 @@
                 document.getElementById('userProfile').innerHTML = `<img src="${user.profileImage}" alt="Profile">`;
             }
 
-            // Check for preid in localStorage
             const hasPreid = localStorage.getItem('preid');
             const quickActions = document.getElementById('quickActions');
             
@@ -933,21 +890,16 @@
 
             const selectedModel = localStorage.getItem('selectedModel') || 'multi';
             
-            // Reset all model options first
             document.querySelectorAll('.model-option').forEach(opt => {
                 opt.classList.remove('active');
                 opt.querySelector('.model-check').style.opacity = '0';
             });
             
-            // Then set the selected model
             document.querySelector(`.model-option[data-model="${selectedModel}"]`).classList.add('active');
             document.querySelector(`.model-option[data-model="${selectedModel}"] .model-check`).style.opacity = '1';
 
             const userPreferences = localStorage.getItem('userPreferences') || '';
             document.getElementById('userPreferences').value = userPreferences;
-            
-            const userName = localStorage.getItem('userName') || user.fullName || '';
-            document.getElementById('userName').value = userName;
 
             const menuButton = document.getElementById('menuButton');
             const menuClose = document.getElementById('menuClose');
@@ -1045,10 +997,7 @@
 
             document.getElementById('saveSettings').addEventListener('click', function() {
                 const preferences = document.getElementById('userPreferences').value;
-                const userName = document.getElementById('userName').value;
-                
                 localStorage.setItem('userPreferences', preferences);
-                localStorage.setItem('userName', userName);
                 
                 document.getElementById('settingsModal').classList.remove('active');
                 overlay.classList.remove('active');
@@ -1093,7 +1042,6 @@
                 const message = messageInput.value.trim();
                 if (!message || isLoading) return;
 
-                // Hide quick actions when chat starts
                 if (currentChat.length === 0) {
                     quickActions.style.display = 'none';
                     welcomeContainer.style.display = 'none';
@@ -1120,10 +1068,12 @@
                 const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 
                 if (sender === 'user') {
+                    const userAvatar = user.profileImage ? 
+                        `<img src="${user.profileImage}" alt="Profile">` : 
+                        `<span class="material-icons">person</span>`;
+                        
                     messageDiv.innerHTML = `
-                        <div class="message-avatar">
-                            <span class="material-icons">person</span>
-                        </div>
+                        <div class="message-avatar">${userAvatar}</div>
                         <div>
                             <div class="message-bubble">${escapeHtml(text)}</div>
                             <div class="message-time">${timeString}</div>
@@ -1181,7 +1131,6 @@
                 try {
                     const selectedModel = localStorage.getItem('selectedModel') || 'multi';
                     const userPreferences = localStorage.getItem('userPreferences') || '';
-                    const userName = localStorage.getItem('userName') || user.fullName || '';
                     
                     let systemPrompt = '';
                     switch (selectedModel) {
@@ -1198,8 +1147,8 @@
                             systemPrompt = `You are Amuthu AI, a helpful assistant. You can communicate in English, Sinhala, and Tamil using simple, everyday language.`;
                     }
                     
-                    if (userName) {
-                        systemPrompt += ` The user's name is ${userName}. Please address them by this name in your responses.`;
+                    if (user.fullName) {
+                        systemPrompt += ` The user's name is ${user.fullName}. Please address them by this name in your responses.`;
                     }
                     
                     if (userPreferences) {
@@ -1210,7 +1159,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': 'Bearer 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'
+                            'Authorization': 'Bearer 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'
                         },
                         body: JSON.stringify({
                             model: 'meta-llama/llama-3-8b-instruct:free',
@@ -1221,7 +1170,15 @@
                         })
                     });
                     
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
                     const data = await response.json();
+                    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+                        throw new Error('Invalid response format');
+                    }
+                    
                     const botMessage = data.choices[0].message.content;
                     
                     hideTypingIndicator();
@@ -1304,7 +1261,7 @@
                 
                 welcomeContainer.style.display = 'none';
                 chatContainer.style.display = 'flex';
-                quickActions.style.display = 'none'; // Hide quick actions when loading a chat
+                quickActions.style.display = 'none';
                 
                 chatMessages.innerHTML = '';
                 
@@ -1316,10 +1273,12 @@
                     const timeString = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     
                     if (msg.sender === 'user') {
+                        const userAvatar = user.profileImage ? 
+                            `<img src="${user.profileImage}" alt="Profile">` : 
+                            `<span class="material-icons">person</span>`;
+                            
                         messageDiv.innerHTML = `
-                            <div class="message-avatar">
-                                <span class="material-icons">person</span>
-                            </div>
+                            <div class="message-avatar">${userAvatar}</div>
                             <div>
                                 <div class="message-bubble">${escapeHtml(msg.text)}</div>
                                 <div class="message-time">${timeString}</div>
