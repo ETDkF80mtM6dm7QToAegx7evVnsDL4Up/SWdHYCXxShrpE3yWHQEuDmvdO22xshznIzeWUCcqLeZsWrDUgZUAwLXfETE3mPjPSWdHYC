@@ -228,10 +228,45 @@
             background-color: var(--surface);
             box-shadow: var(--shadow-2);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             transition: background-color var(--transition-speed);
             position: relative;
+        }
+
+        .quick-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 16px;
+            width: 100%;
+        }
+
+        .quick-action-button {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color var(--transition-speed), transform 0.2s;
+            box-shadow: var(--shadow-2);
+        }
+
+        .quick-action-button:hover {
+            background-color: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .quick-action-button:active {
+            transform: scale(0.95);
+        }
+
+        .quick-action-button .material-icons {
+            font-size: 28px;
         }
 
         .input-pill {
@@ -701,15 +736,27 @@
 
     <div class="chat-container" id="chatContainer">
         <div class="chat-messages" id="chatMessages"></div>
-        <div class="input-container">
-            <div class="input-pill">
-                <input type="text" class="input-field" id="messageInput" placeholder="Type a message...">
-                <button class="send-button" id="sendButton">
-                    <span class="material-icons">send</span>
-                </button>
+    </div>
+
+    <div class="input-container" id="inputContainer">
+        <div class="quick-actions" id="quickActions">
+            <div class="quick-action-button" id="imageButton">
+                <span class="material-icons">image</span>
             </div>
-            <div class="input-hint" id="inputHint">Chat in English, Sinhala or Tamil</div>
+            <div class="quick-action-button" id="searchButton">
+                <span class="material-icons">search</span>
+            </div>
+            <div class="quick-action-button" id="textButton">
+                <span class="material-icons">text_fields</span>
+            </div>
         </div>
+        <div class="input-pill">
+            <input type="text" class="input-field" id="messageInput" placeholder="Type a message...">
+            <button class="send-button" id="sendButton">
+                <span class="material-icons">send</span>
+            </button>
+        </div>
+        <div class="input-hint" id="inputHint">Chat in English, Sinhala or Tamil</div>
     </div>
 
     <div class="side-menu" id="sideMenu">
@@ -774,6 +821,10 @@
             <div class="form-group">
                 <label class="form-label" for="userPreferences">User Preferences</label>
                 <textarea class="form-textarea" id="userPreferences" placeholder="Tell us about yourself and how you want the AI to respond..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="userName">Your Name</label>
+                <input type="text" class="form-input" id="userName" placeholder="What should I call you?">
             </div>
             <button class="send-button" id="saveSettings" style="width: 100%; border-radius: 8px;">
                 <span class="material-icons">save</span>
@@ -868,6 +919,14 @@
                 document.getElementById('userProfile').innerHTML = `<img src="${user.profileImage}" alt="Profile">`;
             }
 
+            // Check for preid in localStorage
+            const hasPreid = localStorage.getItem('preid');
+            const quickActions = document.getElementById('quickActions');
+            
+            if (!hasPreid) {
+                quickActions.style.display = 'none';
+            }
+
             const theme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', theme);
             document.querySelector(`.theme-option[data-theme="${theme}"]`).classList.add('active');
@@ -886,6 +945,9 @@
 
             const userPreferences = localStorage.getItem('userPreferences') || '';
             document.getElementById('userPreferences').value = userPreferences;
+            
+            const userName = localStorage.getItem('userName') || user.fullName || '';
+            document.getElementById('userName').value = userName;
 
             const menuButton = document.getElementById('menuButton');
             const menuClose = document.getElementById('menuClose');
@@ -899,6 +961,9 @@
             const chatTitle = document.getElementById('chatTitle');
             const inputHint = document.getElementById('inputHint');
             const userProfile = document.getElementById('userProfile');
+            const imageButton = document.getElementById('imageButton');
+            const searchButton = document.getElementById('searchButton');
+            const textButton = document.getElementById('textButton');
 
             let currentChat = [];
             let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
@@ -980,7 +1045,10 @@
 
             document.getElementById('saveSettings').addEventListener('click', function() {
                 const preferences = document.getElementById('userPreferences').value;
+                const userName = document.getElementById('userName').value;
+                
                 localStorage.setItem('userPreferences', preferences);
+                localStorage.setItem('userName', userName);
                 
                 document.getElementById('settingsModal').classList.remove('active');
                 overlay.classList.remove('active');
@@ -990,6 +1058,18 @@
 
             userProfile.addEventListener('click', function() {
                 window.location.href = 'user.html';
+            });
+
+            imageButton.addEventListener('click', function() {
+                window.location.href = 'image.html';
+            });
+
+            searchButton.addEventListener('click', function() {
+                window.location.href = 'find.html';
+            });
+
+            textButton.addEventListener('click', function() {
+                window.location.href = 'text.html';
             });
 
             messageInput.addEventListener('focus', function() {
@@ -1013,7 +1093,9 @@
                 const message = messageInput.value.trim();
                 if (!message || isLoading) return;
 
+                // Hide quick actions when chat starts
                 if (currentChat.length === 0) {
+                    quickActions.style.display = 'none';
                     welcomeContainer.style.display = 'none';
                     chatContainer.style.display = 'flex';
                     chatTitle.textContent = message.length > 30 ? message.substring(0, 30) + '...' : message;
@@ -1099,20 +1181,25 @@
                 try {
                     const selectedModel = localStorage.getItem('selectedModel') || 'multi';
                     const userPreferences = localStorage.getItem('userPreferences') || '';
+                    const userName = localStorage.getItem('userName') || user.fullName || '';
                     
                     let systemPrompt = '';
                     switch (selectedModel) {
                         case 'meetare':
-                            systemPrompt = 'You are Amuthu Meetare, a specialized AI assistant for mathematical and coding tasks. Provide accurate, detailed answers to math problems and coding questions.';
+                            systemPrompt = `You are Amuthu Meetare, a specialized AI assistant for mathematical and coding tasks. Provide accurate, detailed answers to math problems and coding questions. You can communicate in English, Sinhala, and Tamil. Use simple, everyday language that is easy to understand.`;
                             break;
                         case 'multi':
-                            systemPrompt = 'You are Amuthu Multi, a versatile AI assistant for everyday tasks. You can communicate fluently in English, Sinhala, and Tamil. Be helpful, friendly, and conversational.';
+                            systemPrompt = `You are Amuthu Multi, a versatile AI assistant for everyday tasks. You can communicate fluently in English, Sinhala, and Tamil using simple, everyday language. Be helpful, friendly, and conversational.`;
                             break;
                         case 'picasso':
-                            systemPrompt = 'You are Amuthu Picasso, a creative AI assistant specialized in songs, poetry, and artistic content. Be creative, expressive, and inspiring.';
+                            systemPrompt = `You are Amuthu Picasso, a creative AI assistant specialized in songs, poetry, and artistic content. You can communicate in English, Sinhala, and Tamil using simple, everyday language. Be creative, expressive, and inspiring.`;
                             break;
                         default:
-                            systemPrompt = 'You are Amuthu AI, a helpful assistant.';
+                            systemPrompt = `You are Amuthu AI, a helpful assistant. You can communicate in English, Sinhala, and Tamil using simple, everyday language.`;
+                    }
+                    
+                    if (userName) {
+                        systemPrompt += ` The user's name is ${userName}. Please address them by this name in your responses.`;
                     }
                     
                     if (userPreferences) {
@@ -1217,6 +1304,7 @@
                 
                 welcomeContainer.style.display = 'none';
                 chatContainer.style.display = 'flex';
+                quickActions.style.display = 'none'; // Hide quick actions when loading a chat
                 
                 chatMessages.innerHTML = '';
                 
