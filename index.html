@@ -143,6 +143,9 @@
             overflow-y: auto;
             background-color: var(--chat-bg);
             transition: background-color var(--transition-speed);
+            /* Fixed scrolling issue */
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
         }
 
         .message {
@@ -825,6 +828,71 @@
             background-color: var(--primary-light);
         }
 
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--surface);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-3);
+            padding: 24px;
+            z-index: 1000;
+            max-width: 400px;
+            width: 90%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .popup.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .popup-message {
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .popup-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .popup-button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .popup-cancel {
+            background-color: var(--surface);
+            color: var(--text-primary);
+            border: 1px solid rgba(0,0,0,0.2);
+        }
+
+        .popup-confirm {
+            background-color: var(--error);
+            color: white;
+        }
+
+        .popup-confirm:hover {
+            background-color: #d32f2f;
+        }
+
         @media (max-width: 600px) {
             .message {
                 max-width: 90%;
@@ -851,7 +919,7 @@
         <div id="notification"></div>
         <div id="authContainer" class="auth-container">
             <div class="auth-card">
-                <img src="https://picsum.photos/seed/amuthuai/120/60.jpg" alt="Amuthu AI" class="logo">
+                <img src="https://github.com/ETDkF80mtM6dm7QToAegx7evVnsDL4Up/SWdHYCXxShrpE3yWHQEuDmvdO22xshznIzeWUCcqLeZsWrDUgZUAwLXfETE3mPjPSWdHYC/raw/refs/heads/main/unnamed.png" alt="Amuthu AI" class="logo">
                 <h1 class="auth-title">Amuthu AI</h1>
                 <div class="auth-form" id="registerForm">
                     <div class="form-group">
@@ -875,6 +943,16 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Popup for confirmation dialogs -->
+    <div class="popup" id="confirmPopup">
+        <div class="popup-title" id="popupTitle">Confirmation</div>
+        <div class="popup-message" id="popupMessage">Are you sure?</div>
+        <div class="popup-buttons">
+            <button class="popup-button popup-cancel" id="popupCancel">Cancel</button>
+            <button class="popup-button popup-confirm" id="popupConfirm">Confirm</button>
         </div>
     </div>
 
@@ -951,9 +1029,9 @@
             function initializeChat() {
                 const user = JSON.parse(localStorage.getItem('userData'));
                 const welcomeMessages = [
-                    `Welcome ${user.fullName}! Let's Chat`,
-                    `Hello ${user.fullName}! How can I help you today?`,
-                    `Hi ${user.fullName}! Ready for a conversation?`
+                    `සුබ උදාසයක් ${user.fullName}! කතා කරමු`,
+                    `හෙලෝ ${user.fullName}! මම ඔබට අද කෙසේ උදව් කළ හැකිද?`,
+                    `හායි ${user.fullName}! කතා කිරීමට සූදානම්ද?`
                 ];
                 const randomWelcome = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
                 
@@ -1030,6 +1108,10 @@
                             <div class="menu-item" id="aboutItem">
                                 <span class="material-icons">info</span>
                                 <span>About</span>
+                            </div>
+                            <div class="menu-item" id="deleteAllChatsItem">
+                                <span class="material-icons">delete_forever</span>
+                                <span>Delete All Chats</span>
                             </div>
                             <div class="menu-item" id="logoutItem">
                                 <span class="material-icons">logout</span>
@@ -1202,6 +1284,7 @@
                 const textButton = document.getElementById('textButton');
                 const userProfileItem = document.getElementById('userProfileItem');
                 const logoutItem = document.getElementById('logoutItem');
+                const deleteAllChatsItem = document.getElementById('deleteAllChatsItem');
 
                 let currentChat = [];
                 let chatHistoryData = localStorage.getItem('title_chat') || '';
@@ -1220,6 +1303,39 @@
                 
                 const apiKey = decodeSecret(G83H82R3);
 
+                // Popup elements
+                const confirmPopup = document.getElementById('confirmPopup');
+                const popupTitle = document.getElementById('popupTitle');
+                const popupMessage = document.getElementById('popupMessage');
+                const popupCancel = document.getElementById('popupCancel');
+                const popupConfirm = document.getElementById('popupConfirm');
+                
+                // Function to show confirmation popup
+                function showConfirmationPopup(title, message, onConfirm) {
+                    popupTitle.textContent = title;
+                    popupMessage.textContent = message;
+                    confirmPopup.classList.add('active');
+                    overlay.classList.add('active');
+                    
+                    // Remove existing event listeners
+                    const newPopupConfirm = popupConfirm.cloneNode(true);
+                    const newPopupCancel = popupCancel.cloneNode(true);
+                    popupConfirm.parentNode.replaceChild(newPopupConfirm, popupConfirm);
+                    popupCancel.parentNode.replaceChild(newPopupCancel, popupCancel);
+                    
+                    // Add new event listeners
+                    document.getElementById('popupConfirm').addEventListener('click', function() {
+                        confirmPopup.classList.remove('active');
+                        overlay.classList.remove('active');
+                        if (onConfirm) onConfirm();
+                    });
+                    
+                    document.getElementById('popupCancel').addEventListener('click', function() {
+                        confirmPopup.classList.remove('active');
+                        overlay.classList.remove('active');
+                    });
+                }
+
                 menuButton.addEventListener('click', function() {
                     sideMenu.classList.add('open');
                     overlay.classList.add('active');
@@ -1236,6 +1352,7 @@
                     document.querySelectorAll('.modal').forEach(modal => {
                         modal.classList.remove('active');
                     });
+                    confirmPopup.classList.remove('active');
                 });
 
                 document.querySelectorAll('.modal-close').forEach(button => {
@@ -1275,11 +1392,36 @@
                     window.location.href = 'about.html';
                 });
 
+                // Delete all chats button in menu
+                deleteAllChatsItem.addEventListener('click', function() {
+                    showConfirmationPopup(
+                        'Delete All Chats',
+                        'Are you sure you want to delete all chat history? This action cannot be undone.',
+                        function() {
+                            deleteAllChats();
+                            sideMenu.classList.remove('open');
+                            overlay.classList.remove('active');
+                        }
+                    );
+                });
+
                 document.getElementById('logoutItem').addEventListener('click', function() {
-                    if (confirm('Are you sure you want to logout?')) {
-                        localStorage.removeItem('userData');
-                        location.reload();
-                    }
+                    showConfirmationPopup(
+                        'Logout',
+                        'Your account is permanently deleted. Are you sure you want to continue?',
+                        function() {
+                            // Clear all localStorage
+                            localStorage.clear();
+                            
+                            // Show notification
+                            showNotification('Your account is permanently deleted', 'success');
+                            
+                            // Reload page after a short delay
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1500);
+                        }
+                    );
                 });
 
                 document.querySelectorAll('.theme-option').forEach(option => {
@@ -1503,316 +1645,10 @@
                         let systemPrompt = '';
                         switch (selectedModel) {
                             case 'meetare':
-                                systemPrompt = `You are Amuthu Meetare, a specialized AI assistant for mathematical and coding tasks. Provide accurate, detailed answers to math problems and coding questions. You can communicate in English, Sinhala, and Tamil. Use simple, everyday language that is easy to understand. Do not discuss your own capabilities or model itself. Focus only on providing helpful information about math and coding. The system was created by Aveesha Ninsara Pelawaththa.`;
+                                systemPrompt = `ඔබ අමුතු මීටරේ, ගණිතමය සහ කේතීකරණ කාර්යයන් සඳහා විශේෂඥ ආධාරකයෙකි. ගණිත ගැටළු සහ කේත ප්‍රශ්න සඳහා නිවැරදි, විස්තර පිළිතුරු සපයන්න. ඔබට ඉංග්‍රීසි, සිංහල සහ දෙමළ භාෂාවෙන් සන්නිවේදනය කළ හැකිය. තේරුම් ගැනීමට පහසු, සාමාන්‍ය භාෂාව භාවිතා කරන්න. ඔබේ හැකියාවන් හෝ ආකෘතිය පිළිබඳව සාකච්ඡා නොකරන්න. ගණිතය සහ කේතීකරණය පිළිබඳ උපකාරී තොරතුරු සපයීමට පමණක් අවධානය යොමු කරන්න. පද්ධතිය Aveesha Ninsara Pelawaththa විසින් නිර්මාණය කරන ලදී.`;
                                 break;
                             case 'multi':
-                                systemPrompt = `You are Amuthu Multi, a versatile AI assistant for everyday tasks. You can communicate fluently in English, Sinhala, and Tamil using simple, everyday language. Be helpful, friendly, and conversational. Do not discuss your own capabilities or model itself. Focus only on providing helpful information. The system was created by Aveesha Ninsara Pelawaththa.`;
+                                systemPrompt = `ඔබ අමුතු මල්ටි, දෛනික කාර්යයන් සඳහා බහුකාර්ය ආධාරකයෙකි. ඔබට ඉංග්‍රීසි, සිංහල සහ දෙමළ භාෂාවෙන් සාමාන්‍ය භාෂාව භාවිතා කරමින් ප්‍රවාහණශීලීව සන්නිවේදනය කළ හැකිය. උපකාරී, මිත්‍රීය සහ සංවාදාත්මක වන්න. ඔබේ හැකියාවන් හෝ ආකෘතිය පිළිබඳව සාකච්ඡා නොකරන්න. උපකාරී තොරතුරු සපයීමට පමණක් අවධානය යොමු කරන්න. පද්ධතිය Aveesha Ninsara Pelawaththa විසින් නිර්මාණය කරන ලදී.`;
                                 break;
                             case 'picasso':
-                                systemPrompt = `You are Amuthu Picasso, a creative AI assistant specialized in songs, poetry, and artistic content. You can communicate in English, Sinhala, and Tamil using simple, everyday language. Be creative, expressive, and inspiring. Do not discuss your own capabilities or model itself. Focus only on providing helpful information about creative content. The system was created by Aveesha Ninsara Pelawaththa.`;
-                                break;
-                            case 'bro':
-                                systemPrompt = `You are Amuthu Bro, a friendly AI assistant for casual chatting. Use Sinhala slang words like අම්මටසිරි, බොක්ක, හලෝ මචං, කොහොමද, සුපිරි in your responses. Be friendly, casual, and conversational. Do not discuss your own capabilities or model itself. Focus only on providing helpful information. The system was created by Aveesha Ninsara Pelawaththa.`;
-                                break;
-                            default:
-                                systemPrompt = `You are Amuthu AI, a helpful assistant. You can communicate in English, Sinhala, and Tamil using simple, everyday language. Do not discuss your own capabilities or model itself. Focus only on providing helpful information. The system was created by Aveesha Ninsara Pelawaththa.`;
-                        }
-                        
-                        if (user.fullName) {
-                            systemPrompt += ` The user's name is ${user.fullName}. Please address them by this name in your responses.`;
-                        }
-                        
-                        if (userPreferences) {
-                            systemPrompt += ` User preferences: ${userPreferences}`;
-                        }
-                        
-                        let conversationHistory = [{
-                            role: "system",
-                            content: systemPrompt
-                        }];
-                        
-                        currentChat.forEach(msg => {
-                            conversationHistory.push({
-                                role: msg.sender === 'user' ? 'user' : 'assistant',
-                                content: msg.text
-                            });
-                        });
-                        
-                        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${apiKey}`,
-                                "HTTP-Referer": window.location.href,
-                                "X-Title": "Amuthu AI"
-                            },
-                            body: JSON.stringify({
-                                model: "meta-llama/llama-3-70b-instruct",
-                                messages: conversationHistory,
-                                temperature: 0.7,
-                                max_tokens: 500  // Reduced to prevent mid-response cutoffs
-                            })
-                        });
-                        
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        
-                        const data = await response.json();
-                        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-                            throw new Error('Invalid response format');
-                        }
-                        
-                        let botMessage = data.choices[0].message.content;
-                        
-                        // Check if user is asking for something outside model's scope
-                        if (selectedModel === 'meetare' && (
-                            userMessage.toLowerCase().includes('song') || 
-                            userMessage.toLowerCase().includes('poem') || 
-                            userMessage.toLowerCase().includes('creative') ||
-                            userMessage.toLowerCase().includes('art')
-                        )) {
-                            botMessage = `It looks like you're asking for creative content like songs or poems. For better results, I recommend switching to Amuthu Picasso model which is specialized for creative content. Would you like me to switch to that model for you?`;
-                        } else if (selectedModel === 'picasso' && (
-                            userMessage.toLowerCase().includes('math') || 
-                            userMessage.toLowerCase().includes('code') || 
-                            userMessage.toLowerCase().includes('calculate') ||
-                            userMessage.toLowerCase().includes('programming')
-                        )) {
-                            botMessage = `It looks like you're asking for help with math or coding. For better results, I recommend switching to Amuthu Meetare model which is specialized for mathematical and coding tasks. Would you like me to switch to that model for you?`;
-                        }
-                        
-                        hideTypingIndicator();
-                        addMessage(botMessage, 'bot');
-                        isLoading = false;
-                    } catch (error) {
-                        console.error('Error getting bot response:', error);
-                        hideTypingIndicator();
-                        addMessage('Sorry, I encountered an error while processing your request. Please try again.', 'bot');
-                        isLoading = false;
-                    }
-                }
-
-                function saveCurrentChat() {
-                    if (currentChat.length === 0) return;
-                    
-                    const shortTitle = currentChat[0].sender === 'user' ? 
-                        generateShortTitle(currentChat[0].text) : 
-                        'New Chat';
-                    
-                    const chatData = {
-                        id: currentChatId || Date.now().toString(),
-                        title: shortTitle,
-                        messages: currentChat,
-                        createdAt: new Date().toISOString()
-                    };
-                    
-                    localStorage.setItem(`chat_${chatData.id}`, JSON.stringify(chatData));
-                    
-                    // Update chat history list
-                    const chatHistoryList = chatHistoryData ? chatHistoryData.split(',') : [];
-                    
-                    // If this is an existing chat, don't add it again
-                    if (!chatHistoryList.includes(chatData.id)) {
-                        chatHistoryList.unshift(chatData.id);
-                    }
-                    
-                    // Keep only the 10 most recent chats
-                    if (chatHistoryList.length > 10) {
-                        const excessIds = chatHistoryList.slice(10);
-                        excessIds.forEach(id => {
-                            localStorage.removeItem(`chat_${id}`);
-                        });
-                        chatHistoryList.splice(10);
-                    }
-                    
-                    localStorage.setItem('title_chat', chatHistoryList.join(','));
-                    
-                    // Update in-memory chat history
-                    const existingIndex = chatHistory.findIndex(chat => chat.id === chatData.id);
-                    if (existingIndex >= 0) {
-                        chatHistory[existingIndex] = chatData;
-                    } else {
-                        chatHistory.unshift(chatData);
-                        if (chatHistory.length > 10) {
-                            chatHistory = chatHistory.slice(0, 10);
-                        }
-                    }
-                }
-
-                function loadChatHistory() {
-                    const chatHistoryBody = document.getElementById('chatHistoryBody');
-                    
-                    if (chatHistory.length === 0) {
-                        chatHistoryBody.innerHTML = '<p>No chat history yet.</p><button class="delete-all-button" id="deleteAllButton">Delete All Chats</button>';
-                        return;
-                    }
-                    
-                    chatHistoryBody.innerHTML = '<button class="delete-all-button" id="deleteAllButton">Delete All Chats</button>';
-                    
-                    chatHistory.forEach(chat => {
-                        const chatItem = document.createElement('div');
-                        chatItem.className = 'chat-history-item';
-                        
-                        const date = new Date(chat.createdAt);
-                        const dateString = date.toLocaleDateString();
-                        
-                        const firstUserMessage = chat.messages.find(msg => msg.sender === 'user');
-                        const preview = firstUserMessage ? 
-                            (firstUserMessage.text.length > 50 ? firstUserMessage.text.substring(0, 50) + '...' : firstUserMessage.text) : 
-                            'No messages';
-                        
-                        chatItem.innerHTML = `
-                            <div class="chat-history-title">${escapeHtml(chat.title)}</div>
-                            <div class="chat-history-preview">${escapeHtml(preview)}</div>
-                            <div class="chat-history-date">${dateString}</div>
-                            <button class="delete-chat" data-id="${chat.id}">
-                                <span class="material-icons">delete</span>
-                            </button>
-                        `;
-                        
-                        chatItem.addEventListener('click', function(e) {
-                            if (!e.target.closest('.delete-chat')) {
-                                loadChat(chat.id);
-                                document.getElementById('chatHistoryModal').classList.remove('active');
-                                overlay.classList.remove('active');
-                            }
-                        });
-                        
-                        const deleteButton = chatItem.querySelector('.delete-chat');
-                        deleteButton.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            deleteChat(chat.id);
-                        });
-                        
-                        chatHistoryBody.appendChild(chatItem);
-                    });
-                    
-                    // Add event listener for delete all button
-                    document.getElementById('deleteAllButton').addEventListener('click', deleteAllChats);
-                }
-
-                function deleteChat(chatId) {
-                    if (confirm('Are you sure you want to delete this chat?')) {
-                        localStorage.removeItem(`chat_${chatId}`);
-                        
-                        // Update chat history list
-                        const chatHistoryList = chatHistoryData ? chatHistoryData.split(',') : [];
-                        const index = chatHistoryList.indexOf(chatId);
-                        if (index > -1) {
-                            chatHistoryList.splice(index, 1);
-                            localStorage.setItem('title_chat', chatHistoryList.join(','));
-                        }
-                        
-                        // Update in-memory chat history
-                        chatHistory = chatHistory.filter(chat => chat.id !== chatId);
-                        
-                        // If the deleted chat is the current chat, start a new chat
-                        if (currentChatId === chatId) {
-                            startNewChat();
-                        }
-                        
-                        // Refresh UI
-                        loadChatHistory();
-                    }
-                }
-
-                function deleteAllChats() {
-                    if (confirm('Are you sure you want to delete all chats? This action cannot be undone.')) {
-                        // Get all chat IDs
-                        const chatHistoryList = chatHistoryData ? chatHistoryData.split(',') : [];
-                        
-                        // Delete all chat data
-                        chatHistoryList.forEach(id => {
-                            localStorage.removeItem(`chat_${id}`);
-                        });
-                        
-                        // Clear chat history list
-                        localStorage.removeItem('title_chat');
-                        
-                        // Update in-memory chat history
-                        chatHistory = [];
-                        
-                        // Start a new chat
-                        startNewChat();
-                        
-                        // Refresh UI
-                        loadChatHistory();
-                    }
-                }
-
-                function loadChat(chatId) {
-                    const chatData = localStorage.getItem(`chat_${chatId}`);
-                    if (!chatData) return;
-                    
-                    const chat = JSON.parse(chatData);
-                    currentChat = chat.messages;
-                    currentChatId = chat.id;
-                    chatTitle.textContent = chat.title;
-                    
-                    welcomeContainer.style.display = 'none';
-                    chatContainer.style.display = 'flex';
-                    quickActions.style.display = 'none';
-                    
-                    // Clear the chat messages container before loading new messages
-                    chatMessages.innerHTML = '';
-                    
-                    currentChat.forEach(msg => {
-                        const messageDiv = document.createElement('div');
-                        messageDiv.className = `message ${msg.sender}`;
-                        
-                        const time = new Date(msg.time);
-                        const timeString = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                        
-                        if (msg.sender === 'user') {
-                            messageDiv.innerHTML = `
-                                <div class="message-avatar">${profileInitial.outerHTML}</div>
-                                <div>
-                                    <div class="message-bubble">${escapeHtml(msg.text)}</div>
-                                    <div class="message-time">${timeString}</div>
-                                </div>
-                            `;
-                        } else {
-                            messageDiv.innerHTML = `
-                                <div class="message-avatar">
-                                    <span class="material-icons">smart_toy</span>
-                                </div>
-                                <div>
-                                    <div class="message-bubble">${formatResponse(msg.text)}</div>
-                                    <div class="message-time">${timeString}</div>
-                                </div>
-                            `;
-                        }
-                        
-                        chatMessages.appendChild(messageDiv);
-                    });
-                    
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }
-
-                function escapeHtml(text) {
-                    const map = {
-                        '&': '&amp;',
-                        '<': '&lt;',
-                        '>': '&gt;',
-                        '"': '&quot;',
-                        "'": '&#039;'
-                    };
-                    
-                    return text.replace(/[&<>"']/g, m => map[m]);
-                }
-
-                function showNotification(message, type = 'info') {
-                    const notification = document.getElementById('notification');
-                    notification.textContent = message;
-                    notification.className = `notification show ${type}`;
-                    
-                    setTimeout(() => {
-                        notification.classList.remove('show');
-                    }, 3000);
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+                                systemPrompt = `ඔබ අමුතු පිකාසෝ, ගීත, කවි සහ කලාත්මක අන
