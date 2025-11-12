@@ -68,6 +68,7 @@
             box-shadow: var(--shadow-1);
             z-index: 100;
             transition: background-color var(--transition-speed);
+            flex-shrink: 0;
         }
 
         .menu-button {
@@ -145,12 +146,14 @@
             transition: background-color var(--transition-speed);
             -webkit-overflow-scrolling: touch;
             overscroll-behavior: contain;
+            height: calc(100vh - 160px);
         }
 
         .message {
             display: flex;
             margin-bottom: 16px;
             max-width: 80%;
+            position: relative;
         }
 
         .message.user {
@@ -216,6 +219,40 @@
             text-align: left;
         }
 
+        .message-actions {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .copy-button {
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+        }
+
+        .copy-button .material-icons {
+            font-size: 14px;
+        }
+
+        .user .message-actions {
+            left: 5px;
+            right: auto;
+        }
+
         .input-container {
             padding: 16px;
             padding-bottom: 20px;
@@ -227,6 +264,7 @@
             transition: background-color var(--transition-speed);
             position: relative;
             z-index: 10;
+            flex-shrink: 0;
         }
 
         .input-pill {
@@ -295,6 +333,32 @@
 
         .input-hint.visible {
             opacity: 1;
+        }
+
+        .scroll-to-top {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-2);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 50;
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
         }
 
         .side-menu {
@@ -947,6 +1011,10 @@
         </div>
     </div>
 
+    <button class="scroll-to-top" id="scrollToTop">
+        <span class="material-icons">keyboard_arrow_up</span>
+    </button>
+
     <div class="popup" id="confirmPopup">
         <div class="popup-title" id="popupTitle">Confirmation</div>
         <div class="popup-message" id="popupMessage">Are you sure?</div>
@@ -1274,6 +1342,7 @@
                 const userProfileItem = document.getElementById('userProfileItem');
                 const logoutItem = document.getElementById('logoutItem');
                 const deleteAllChatsItem = document.getElementById('deleteAllChatsItem');
+                const scrollToTop = document.getElementById('scrollToTop');
 
                 let currentChat = [];
                 let chatHistoryData = localStorage.getItem('title_chat') || '';
@@ -1397,7 +1466,86 @@
                             localStorage.clear();
                             showNotification('Your account is permanently deleted', 'success');
                             setTimeout(() => {
-                                location.reload();
+                                const appContainer = document.getElementById('appContainer');
+                                appContainer.innerHTML = `
+                                    <div id="notification"></div>
+                                    <div id="authContainer" class="auth-container">
+                                        <div class="auth-card">
+                                            <img src="https://github.com/ETDkF80mtM6dm7QToAegx7evVnsDL4Up/SWdHYCXxShrpE3yWHQEuDmvdO22xshznIzeWUCcqLeZsWrDUgZUAwLXfETE3mPjPSWdHYC/raw/refs/heads/main/unnamed.png" alt="Amuthu AI" class="logo">
+                                            <h1 class="auth-title">Amuthu AI</h1>
+                                            <div class="auth-form" id="registerForm">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="regFullName">Full Name</label>
+                                                    <input type="text" class="form-input" id="regFullName" placeholder="Enter your full name">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="form-label" for="regEmail">Email</label>
+                                                    <input type="email" class="form-input" id="regEmail" placeholder="Enter your email">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="form-label" for="regPassword">Password</label>
+                                                    <input type="password" class="form-input" id="regPassword" placeholder="Enter your password">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="form-label" for="regPhone">Phone (Optional)</label>
+                                                    <input type="tel" class="form-input" id="regPhone" placeholder="Enter your phone number">
+                                                </div>
+                                                <button class="send-button" id="regRegisterBtn" style="width: 100%; border-radius: 8px; margin-top: 16px;">
+                                                    <span class="material-icons">person_add</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                
+                                const registerBtn = document.getElementById('regRegisterBtn');
+                                registerBtn.addEventListener('click', function() {
+                                    const fullName = document.getElementById('regFullName').value.trim();
+                                    const email = document.getElementById('regEmail').value.trim();
+                                    const password = document.getElementById('regPassword').value.trim();
+                                    const phone = document.getElementById('regPhone').value.trim();
+                                    
+                                    if (!fullName || !email || !password) {
+                                        showNotification('Please fill in all required fields.', 'error');
+                                        return;
+                                    }
+                                    
+                                    if (password.length < 8) {
+                                        showNotification('Password must be at least 8 characters long.', 'error');
+                                        return;
+                                    }
+                                    
+                                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                                    if (!emailRegex.test(email)) {
+                                        showNotification('Please enter a valid email address.', 'error');
+                                        return;
+                                    }
+                                    
+                                    const users = JSON.parse(localStorage.getItem('users') || '[]');
+                                    if (users.find(u => u.email === email)) {
+                                        showNotification('User with this email already exists.', 'error');
+                                        return;
+                                    }
+                                    
+                                    const newUser = {
+                                        fullName: fullName,
+                                        email: email,
+                                        password: password,
+                                        phone: phone,
+                                        registeredAt: new Date().toISOString()
+                                    };
+                                    
+                                    users.push(newUser);
+                                    localStorage.setItem('users', JSON.stringify(users));
+                                    localStorage.setItem('userData', JSON.stringify(newUser));
+                                    
+                                    showNotification('Registration successful! Loading chat...', 'success');
+                                    
+                                    setTimeout(() => {
+                                        document.getElementById('authContainer').style.display = 'none';
+                                        initializeChat();
+                                    }, 1500);
+                                });
                             }, 1500);
                         }
                     );
@@ -1461,6 +1609,21 @@
                 });
 
                 sendButton.addEventListener('click', sendMessage);
+
+                chatMessages.addEventListener('scroll', function() {
+                    if (chatMessages.scrollTop > 200) {
+                        scrollToTop.classList.add('visible');
+                    } else {
+                        scrollToTop.classList.remove('visible');
+                    }
+                });
+
+                scrollToTop.addEventListener('click', function() {
+                    chatMessages.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
 
                 function adjustInputContainer() {
                     const inputContainer = document.getElementById('inputContainer');
@@ -1548,6 +1711,11 @@
                                 <div class="message-bubble">${escapeHtml(text)}</div>
                                 <div class="message-time">${timeString}</div>
                             </div>
+                            <div class="message-actions">
+                                <button class="copy-button" data-text="${escapeHtml(text)}">
+                                    <span class="material-icons">content_copy</span>
+                                </button>
+                            </div>
                         `;
                     } else {
                         messageDiv.innerHTML = `
@@ -1558,11 +1726,26 @@
                                 <div class="message-bubble">${formatResponse(text)}</div>
                                 <div class="message-time">${timeString}</div>
                             </div>
+                            <div class="message-actions">
+                                <button class="copy-button" data-text="${escapeHtml(text)}">
+                                    <span class="material-icons">content_copy</span>
+                                </button>
+                            </div>
                         `;
                     }
                     
                     chatMessages.appendChild(messageDiv);
                     chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    const copyButton = messageDiv.querySelector('.copy-button');
+                    copyButton.addEventListener('click', function() {
+                        const textToCopy = this.getAttribute('data-text');
+                        navigator.clipboard.writeText(textToCopy).then(() => {
+                            showNotification('Message copied to clipboard', 'success');
+                        }).catch(err => {
+                            showNotification('Failed to copy message', 'error');
+                        });
+                    });
                     
                     currentChat.push({
                         text: text,
@@ -1865,6 +2048,11 @@
                                     <div class="message-bubble">${escapeHtml(msg.text)}</div>
                                     <div class="message-time">${timeString}</div>
                                 </div>
+                                <div class="message-actions">
+                                    <button class="copy-button" data-text="${escapeHtml(msg.text)}">
+                                        <span class="material-icons">content_copy</span>
+                                    </button>
+                                </div>
                             `;
                         } else {
                             messageDiv.innerHTML = `
@@ -1875,8 +2063,23 @@
                                     <div class="message-bubble">${formatResponse(msg.text)}</div>
                                     <div class="message-time">${timeString}</div>
                                 </div>
+                                <div class="message-actions">
+                                    <button class="copy-button" data-text="${escapeHtml(msg.text)}">
+                                        <span class="material-icons">content_copy</span>
+                                    </button>
+                                </div>
                             `;
                         }
+                        
+                        const copyButton = messageDiv.querySelector('.copy-button');
+                        copyButton.addEventListener('click', function() {
+                            const textToCopy = this.getAttribute('data-text');
+                            navigator.clipboard.writeText(textToCopy).then(() => {
+                                showNotification('Message copied to clipboard', 'success');
+                            }).catch(err => {
+                                showNotification('Failed to copy message', 'error');
+                            });
+                        });
                         
                         chatMessages.appendChild(messageDiv);
                     });
